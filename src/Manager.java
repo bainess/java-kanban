@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -46,10 +47,13 @@ public class Manager {
             id = newTask.getId();
         }
         if (taskList.containsKey(id)){
-            System.out.println(id + " : " + task);
             taskList.put(id, task);
         }
 
+    }
+
+    public ArrayList<Subtask> getAllSubtasks(Epic epic){
+        return epic.subtasksList;
     }
 }
 
