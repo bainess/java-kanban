@@ -31,6 +31,8 @@ public class Manager {
         taskList.clear();
     }
 
-
+    public Object getAllTasks() {
+        return taskList.values();
+    }
 }
 
