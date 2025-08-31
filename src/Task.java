@@ -1,34 +1,34 @@
+import java.util.stream.StreamSupport;
+
 public class Task {
     String title;
     String description;
-    int id;
+    private static int count = 0;
+    private int id;
     Status status;
 
-    Task(String title, String description, Status status){
+    Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
+        id = count++;
     }
-
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof Task task)) return false;
-
-        return id == task.id && title.equals(task.title) && description.equals(task.description) && status == task.status;
+        return id == task.id;
     }
 
-    private void setId (){
-        id = hashCode();
+    public Integer getId(){
+        return id;
     }
 
     @Override
     public int hashCode() {
-        int result = title.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + id;
-        result = 31 * result + status.hashCode();
+        int result = 31 * id;
         return result;
     }
+
 
 
 }
