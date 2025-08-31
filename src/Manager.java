@@ -37,14 +37,16 @@ public class Manager {
 
     public void editTask (Object task){
         int id = -1;
-        if (task.getClass().equals("class Task")) {
+        String classTask = String.valueOf(task.getClass());
+        if (classTask.equals("class Task")) {
             Task newTask = (Task) task;
             id = newTask.getId();
-        } else if (task.getClass().equals("class Epic")) {
+        } else if (classTask.equals("class Epic")) {
             Epic newTask = (Epic) task;
             id = newTask.getId();
         }
         if (taskList.containsKey(id)){
+            System.out.println(id + " : " + task);
             taskList.put(id, task);
         }
 
