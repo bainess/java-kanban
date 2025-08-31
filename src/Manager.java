@@ -34,5 +34,20 @@ public class Manager {
     public Object getAllTasks() {
         return taskList.values();
     }
+
+    public void editTask (Object task){
+        int id = -1;
+        if (task.getClass().equals("class Task")) {
+            Task newTask = (Task) task;
+            id = newTask.getId();
+        } else if (task.getClass().equals("class Epic")) {
+            Epic newTask = (Epic) task;
+            id = newTask.getId();
+        }
+        if (taskList.containsKey(id)){
+            taskList.put(id, task);
+        }
+
+    }
 }
 
