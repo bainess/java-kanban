@@ -29,6 +29,10 @@ public class Task {
         return result;
     }
 
+    @Override
+    public String toString () {
+        return "Task" + this.title + " " + this.id + " "  + this.description + " "  + this.status;
 
+    }
 
 }
