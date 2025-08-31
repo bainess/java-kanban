@@ -3,24 +3,40 @@ import java.util.HashMap;
 
 
 public class Manager {
-    HashMap<Integer, Object> taskList = new HashMap<>();
+    HashMap<Integer, Task> taskList = new HashMap<>();
+    HashMap<Integer, Epic> epicList = new HashMap<>();
+    HashMap<Integer, Subtask> subtaskList = new HashMap<>();
 
     public void addTask(Object task) {
         String taskClass = String.valueOf(task.getClass());
         Integer id;
-        if (taskClass.equals("class Task")) {
-            Task newTask = (Task) task;
-            id = newTask.getId();
-        } else {
-            Epic newTask = (Epic) task;
-            id = newTask.getId();
+        switch (taskClass) {
+            case "class Task":
+                Task newTask = (Task) task;
+                id = newTask.getId();
+                taskList.put(id, newTask);
+                break;
+            case "class Epic":
+                Epic newEpic = (Epic) task;
+                id = newEpic.getId();
+                epicList.put(id, newEpic);
+                break;
+            case "class Subtask":
+                Subtask newSubtask = (Subtask) task;
+                id = newSubtask.getId();
+                subtaskList.put(id, newSubtask);
+                break;
         }
-        taskList.put(id, task);
+
     }
 
     public Object getTaskById(int id) {
         if (taskList.containsKey(id)) {
             return taskList.get(id);
+        } else if (epicList.containsKey(id)) {
+            return taskList.get(id);
+        } else if (subtaskList.containsKey(id)){
+            return subtaskList.get(id);
         }
         return "no task by id" + id;
     }
@@ -32,28 +48,39 @@ public class Manager {
         taskList.clear();
     }
 
-    public Object getAllTasks() {
-        return taskList.values();
-    }
-
-    public void editTask (Object task){
+    public void editTask (Object task) {
         int id = -1;
         String classTask = String.valueOf(task.getClass());
         if (classTask.equals("class Task")) {
             Task newTask = (Task) task;
             id = newTask.getId();
-        } else if (classTask.equals("class Epic")) {
-            Epic newTask = (Epic) task;
-            id = newTask.getId();
+            if (taskList.containsKey(id)) {
+                taskList.put(id, newTask);
+            } else if (classTask.equals("class Epic")) {
+                Epic newEpic = (Epic) task;
+                id = newEpic.getId();
+                if (epicList.containsKey(id)) {
+                    epicList.put(id, newEpic);
+                }
+            } else if (classTask.equals("class Subtask")) {
+                Subtask newSubtask = (Subtask) task;
+                id = newSubtask.getId();
+                if (subtaskList.containsKey(id)) {
+                    subtaskList.put(id, newSubtask);
+                }
+            }
         }
-        if (taskList.containsKey(id)){
-            taskList.put(id, task);
-        }
-
+    }
+    public Object getAllTasks() {
+        return taskList.values();
+    }
+    public Object getAllEpic(){
+        return epicList.values();
     }
 
-    public ArrayList<Subtask> getAllSubtasks(Epic epic){
-        return epic.subtasksList;
+    public Object getAllSubtasks(){
+        return epicList.values();
     }
+
 }
 
