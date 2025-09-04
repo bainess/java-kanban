@@ -7,7 +7,52 @@ public class Manager {
     HashMap<Integer, Epic> epicList = new HashMap<>();
     HashMap<Integer, Subtask> subtaskList = new HashMap<>();
 
-    public void addTask(Object task) {
+    public void createTask(Task task) {
+        int id = task.getId();
+        taskList.put(id, task);
+    }
+
+    public void createEpic(Epic epic) {
+        int id = epic.getId();
+        epicList.put(id, epic);
+        epic.setStatus(subtaskList);
+    }
+    public void createSubtask (Subtask subtask) {
+        int id = subtask.getId();
+        int epicId = subtask.getEpicId();
+        subtaskList.put(id, subtask);
+        Epic epic = epicList.get(epicId);
+        epic.addSubtaskId(id);
+        epic.setStatus(subtaskList);
+    }
+
+    public void removeTaskById(int id){
+        if (taskList.containsKey(id)) {
+            taskList.remove(id);
+        }
+    }
+
+    public void removeEpicById(int id){
+        if (epicList.containsKey(id)){
+            ArrayList<Integer> epicIds = epicList.get(id).subtaskIds;
+            for (int i = 0; i < epicIds.size(); i++) {
+                subtaskList.remove(i);
+            }
+            epicList.remove(id);
+        }
+    }
+    public void removeSubtaskById(int id){
+        if (subtaskList.containsKey(id)) {
+            Subtask subToRemove = subtaskList.get(id);
+            int epicId = subToRemove.getEpicId();
+            Epic epic = epicList.get(epicId);
+            epic.removeSubTaskId(id);
+            subtaskList.remove(id);
+        }
+    }
+    //  оба метода ниже работают с любым типом заданий, можно ли оставить их или обязательно каждому классу
+    //  свой метод? (если да, то почему)
+    public void addAnyTask(Object task) {
         String taskClass = String.valueOf(task.getClass());
         Integer id;
         switch (taskClass) {
@@ -20,11 +65,16 @@ public class Manager {
                 Epic newEpic = (Epic) task;
                 id = newEpic.getId();
                 epicList.put(id, newEpic);
+                newEpic.setStatus(subtaskList);
                 break;
             case "class Subtask":
                 Subtask newSubtask = (Subtask) task;
                 id = newSubtask.getId();
+                int epicId = newSubtask.getEpicId();
                 subtaskList.put(id, newSubtask);
+                Epic epic = epicList.get(epicId);
+                epic.addSubtaskId(id);
+                epic.setStatus(subtaskList);
                 break;
         }
 
@@ -34,18 +84,35 @@ public class Manager {
         if (taskList.containsKey(id)) {
             return taskList.get(id);
         } else if (epicList.containsKey(id)) {
-            return taskList.get(id);
+            return epicList.get(id);
         } else if (subtaskList.containsKey(id)){
             return subtaskList.get(id);
         }
         return "no task by id" + id;
     }
 
-    public void removeTaskById(int id){
-       taskList.remove(id);
+    public void removeAnyTaskById(int id){
+        if (taskList.containsKey(id)){
+            taskList.remove(id);
+        } else if (epicList.containsKey(id)){
+            ArrayList<Integer> epicIds = epicList.get(id).subtaskIds;
+            for (int i = 0; i < epicIds.size(); i++) {
+                subtaskList.remove(i);
+            }
+            epicList.remove(id);
+        } else if (subtaskList.containsKey(id)) {
+            Subtask subToRemove = subtaskList.get(id);
+            int epicId = subToRemove.getEpicId();
+            Epic epic = epicList.get(epicId);
+            epic.removeSubTaskId(id);
+            subtaskList.remove(id);
+        }
     }
+
     public void removeAll() {
         taskList.clear();
+        epicList.clear();
+        subtaskList.clear();
     }
 
     public void editTask (Object task) {
@@ -59,6 +126,7 @@ public class Manager {
             } else if (classTask.equals("class Epic")) {
                 Epic newEpic = (Epic) task;
                 id = newEpic.getId();
+                newEpic.setStatus(subtaskList);
                 if (epicList.containsKey(id)) {
                     epicList.put(id, newEpic);
                 }
@@ -71,16 +139,29 @@ public class Manager {
             }
         }
     }
+
     public Object getAllTasks() {
         return taskList.values();
     }
+
     public Object getAllEpic(){
         return epicList.values();
     }
 
     public Object getAllSubtasks(){
-        return epicList.values();
+        return subtaskList.values();
     }
 
+    public void removeAllTasks () {
+        taskList.clear();
+    }
+
+    public void removeAllEpics() {
+        epicList.clear();
+    }
+
+    public void removeAllSubtasks() {
+        subtaskList.clear();
+    }
 }
 

@@ -1,11 +1,19 @@
 import java.util.stream.StreamSupport;
 
 public class Task {
+
     String title;
     String description;
     private static int count = 0;
-    private int id;
+    private final int id;
     Status status;
+
+    Task(String title, String description) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        id = count++;
+    }
 
     Task(String title, String description, Status status) {
         this.title = title;
@@ -13,14 +21,37 @@ public class Task {
         this.status = status;
         id = count++;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getDescription() {
+        return this.description;
+    }
+    public Integer getId(){
+        return id;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (!(o instanceof Task task)) return false;
         return id == task.id;
-    }
-
-    public Integer getId(){
-        return id;
     }
 
     @Override
@@ -31,8 +62,6 @@ public class Task {
 
     @Override
     public String toString () {
-        return "Task" + this.title + " " + this.id + " "  + this.description + " "  + this.status;
-
+        return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status;
     }
-
 }

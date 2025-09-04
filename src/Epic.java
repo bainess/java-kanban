@@ -1,38 +1,51 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Epic extends Task{
-    ArrayList<Subtask> subtasksList;
     ArrayList<Integer> subtaskIds = new ArrayList<>();
 
-    Epic(String title, String description, ArrayList<Subtask> subtasksList) {
+    Epic(String title, String description) {
         super(title, description);
-        this.subtasksList = subtasksList;
-        setStatus(subtasksList);
-        for (Subtask subtask : subtasksList) {
-            subtaskIds.add(subtask.getId());
-            subtask.setEpicId(this.getId());
+    }
+
+    public void addSubtaskId(int id) {
+        subtaskIds.add(id);
+    }
+
+    public void removeSubTaskId (int id) {
+        for (int i = 0; i < subtaskIds.size(); i++) {
+            int subId = subtaskIds.get(i);
+            if (subId == id) {
+                subtaskIds.remove(i);
+            }
         }
     }
 
-    private void setStatus (ArrayList<Subtask> subtasksList) {
+    public void setStatus (HashMap<Integer, Subtask> subtaskMap) {
         int statusNew = 0;
         int statusDone = 0;
-        for (Subtask subtask : subtasksList) {
-            if (subtask.getStatus().equals(Status.NEW)) {
-                statusNew++;
-            } else if (subtask.getStatus().equals(Status.DONE)) {
-                statusDone++;
+        for (Subtask subtask : subtaskMap.values()) {
+            if (this.subtaskIds.contains(subtask.getId())) {
+                if (subtask.getStatus().equals(Status.NEW)) {
+                    statusNew++;
+                } else if (subtask.getStatus().equals(Status.DONE)) {
+                    statusDone++;
+                }
             }
+
         }
-        if (subtasksList.size() == statusNew) {
+
+        if (this.subtaskIds.size() == statusNew) {
             this.status = Status.NEW;
-        } else if (subtasksList.size() == statusDone) {
+        } else if (this.subtaskIds.size() == statusDone) {
             this.status = Status.DONE;
         } else {
             this.status = Status.IN_PROGRESS;
         }
     }
 
-
-
+    @Override
+    public String toString () {
+        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + " subtasks: " + this.subtaskIds;
+    }
 }
