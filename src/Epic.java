@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task{
-    ArrayList<Integer> subtaskIds = new ArrayList<>();
+   protected ArrayList<Integer> subtaskIds = new ArrayList<>();
 
     public Epic(String title, String description, int id) {
         super(title, description, id);
@@ -11,7 +11,7 @@ public class Epic extends Task{
     public void addSubtaskId(int id) {
         subtaskIds.add(id);
     }
-
+    public ArrayList<Integer> getSubtaskIds() {return  this.subtaskIds;}
     public void removeSubTaskId (int id) {
         for (int i = 0; i < subtaskIds.size(); i++) {
             int subId = subtaskIds.get(i);
