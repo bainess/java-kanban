@@ -8,14 +8,14 @@ public class Task {
     private final int id;
     Status status;
 
-    Task(String title, String description) {
+   public Task(String title, String description) {
         this.title = title;
         this.description = description;
         this.status = status;
         id = count++;
     }
 
-    Task(String title, String description, Status status) {
+    public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
