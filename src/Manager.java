@@ -57,14 +57,23 @@ public class Manager {
     public Object getTaskById(int id) {
         if (taskList.containsKey(id)) {
             return taskList.get(id);
-        } else if (epicList.containsKey(id)) {
+        } else {
+            return "no task by id" + id;
+        }
+    }
+    public Object getEpicById(int id) {
+        if  (epicList.containsKey(id)) {
             return epicList.get(id);
-        } else if (subtaskList.containsKey(id)){
+        } else {
+            return "no task by id" + id;
+        }
+    }
+    public Object getSubtaskById(int id) {
+        if (subtaskList.containsKey(id)){
             return subtaskList.get(id);
         }
         return "no task by id" + id;
     }
-
 
     public void removeAll() {
         taskList.clear();
