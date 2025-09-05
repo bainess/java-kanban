@@ -21,7 +21,7 @@ public class Epic extends Task{
         }
     }
 
-    public void setStatus (HashMap<Integer, Subtask> subtaskMap) {
+    public void setStatus(HashMap<Integer, Subtask> subtaskMap) {
         int statusNew = 0;
         int statusDone = 0;
         for (Subtask subtask : subtaskMap.values()) {

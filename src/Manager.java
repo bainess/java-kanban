@@ -89,7 +89,7 @@ public class Manager {
     }
     public void editEpic(Epic epic){
         int id = epic.getId();
-        Epic.setStatus(subtaskList);
+        epic.setStatus(subtaskList);
         if (epicList.containsKey(id)) {
             epicList.put(id, epic);
         }
