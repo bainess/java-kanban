@@ -4,22 +4,24 @@ public class Task {
 
     String title;
     String description;
-    private static int count = 0;
-    private final int id;
+    private int id;
     Status status;
 
-   public Task(String title, String description) {
+   public Task(String title, String description, int id) {
         this.title = title;
         this.description = description;
         this.status = status;
-        id = count++;
+        this.id = id;
     }
 
     public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
-        id = count++;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setTitle(String title) {

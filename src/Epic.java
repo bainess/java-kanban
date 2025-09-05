@@ -4,8 +4,8 @@ import java.util.HashMap;
 public class Epic extends Task{
     ArrayList<Integer> subtaskIds = new ArrayList<>();
 
-    public Epic(String title, String description) {
-        super(title, description);
+    public Epic(String title, String description, int id) {
+        super(title, description, id);
     }
 
     public void addSubtaskId(int id) {

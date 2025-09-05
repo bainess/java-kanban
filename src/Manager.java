@@ -6,19 +6,22 @@ public class Manager {
     HashMap<Integer, Task> taskList = new HashMap<>();
     HashMap<Integer, Epic> epicList = new HashMap<>();
     HashMap<Integer, Subtask> subtaskList = new HashMap<>();
-
+    private int count = 0;
     public void createTask(Task task) {
-        int id = task.getId();
+        int id = count++;
+        task.setId(id);
         taskList.put(id, task);
     }
 
     public void createEpic(Epic epic) {
-        int id = epic.getId();
+        int id = count++;
+        epic.setId(id);
         epicList.put(id, epic);
         epic.setStatus(subtaskList);
     }
     public void createSubtask (Subtask subtask) {
-        int id = subtask.getId();
+        int id = count++;
+        subtask.setId(id);
         int epicId = subtask.getEpicId();
         subtaskList.put(id, subtask);
         Epic epic = epicList.get(epicId);
