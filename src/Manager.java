@@ -53,35 +53,6 @@ public class Manager {
             subtaskList.remove(id);
         }
     }
-    //  оба метода ниже работают с любым типом заданий, можно ли оставить их или обязательно каждому классу
-    //  свой метод? (если да, то почему)
-    public void addAnyTask(Object task) {
-        String taskClass = String.valueOf(task.getClass());
-        Integer id;
-        switch (taskClass) {
-            case "class Task":
-                Task newTask = (Task) task;
-                id = newTask.getId();
-                taskList.put(id, newTask);
-                break;
-            case "class Epic":
-                Epic newEpic = (Epic) task;
-                id = newEpic.getId();
-                epicList.put(id, newEpic);
-                newEpic.setStatus(subtaskList);
-                break;
-            case "class Subtask":
-                Subtask newSubtask = (Subtask) task;
-                id = newSubtask.getId();
-                int epicId = newSubtask.getEpicId();
-                subtaskList.put(id, newSubtask);
-                Epic epic = epicList.get(epicId);
-                epic.addSubtaskId(id);
-                epic.setStatus(subtaskList);
-                break;
-        }
-
-    }
 
     public Object getTaskById(int id) {
         if (taskList.containsKey(id)) {
@@ -94,23 +65,6 @@ public class Manager {
         return "no task by id" + id;
     }
 
-    public void removeAnyTaskById(int id){
-        if (taskList.containsKey(id)){
-            taskList.remove(id);
-        } else if (epicList.containsKey(id)){
-            ArrayList<Integer> epicIds = epicList.get(id).subtaskIds;
-            for (int i = 0; i < epicIds.size(); i++) {
-                subtaskList.remove(i);
-            }
-            epicList.remove(id);
-        } else if (subtaskList.containsKey(id)) {
-            Subtask subToRemove = subtaskList.get(id);
-            int epicId = subToRemove.getEpicId();
-            Epic epic = epicList.get(epicId);
-            epic.removeSubTaskId(id);
-            subtaskList.remove(id);
-        }
-    }
 
     public void removeAll() {
         taskList.clear();
@@ -118,41 +72,45 @@ public class Manager {
         subtaskList.clear();
     }
 
-    public void editTask (Object task) {
-        int id = -1;
-        String classTask = String.valueOf(task.getClass());
-        if (classTask.equals("class Task")) {
-            Task newTask = (Task) task;
-            id = newTask.getId();
+    public void editTask (Task task) {
+        int id = task.getId();
             if (taskList.containsKey(id)) {
-                taskList.put(id, newTask);
-            } else if (classTask.equals("class Epic")) {
-                Epic newEpic = (Epic) task;
-                id = newEpic.getId();
-                newEpic.setStatus(subtaskList);
-                if (epicList.containsKey(id)) {
-                    epicList.put(id, newEpic);
-                }
-            } else if (classTask.equals("class Subtask")) {
-                Subtask newSubtask = (Subtask) task;
-                id = newSubtask.getId();
-                if (subtaskList.containsKey(id)) {
-                    subtaskList.put(id, newSubtask);
-                }
+                taskList.put(id, task);
             }
+    }
+    public void editEpic(Epic epic){
+        int id = epic.getId();
+        Epic.setStatus(subtaskList);
+        if (epicList.containsKey(id)) {
+            epicList.put(id, epic);
         }
     }
-
+    public void editSubtask(Subtask subtask) {
+        int id = subtask.getId();
+        if (subtaskList.containsKey(id)) {
+            subtaskList.put(id, subtask);
+        }
+    }
     public Object getAllTasks() {
-        return taskList.values();
+        ArrayList<Task> taskArray= new ArrayList<>();
+        for (Task task : taskList.values()) taskArray.add(task);
+        return taskArray;
     }
 
     public Object getAllEpic(){
-        return epicList.values();
+        ArrayList<Task> epicArray= new ArrayList<>();
+        for (Epic epic : epicList.values()) {
+            epicArray.add(epic);
+        }
+        return epicArray;
     }
 
     public Object getAllSubtasks(){
-        return subtaskList.values();
+        ArrayList<Task> subtaskArray= new ArrayList<>();
+        for (Subtask subtask : subtaskList.values()) {
+            subtaskArray.add(subtask);
+        }
+        return subtaskArray;
     }
 
     public void removeAllTasks () {
