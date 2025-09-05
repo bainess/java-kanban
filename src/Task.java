@@ -2,9 +2,9 @@ import java.util.stream.StreamSupport;
 
 public class Task {
 
-    String title;
-    String description;
-    private int id;
+    protected String title;
+    protected String description;
+    protected int id;
     Status status;
 
    public Task(String title, String description, int id) {
