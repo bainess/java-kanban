@@ -1,10 +1,9 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Main {
 
     public static void main(String[] args) {
-        Manager taskManager = new Manager();
+        Manager taskManager = new InMemoryTaskManager();
         Task task1 = new Task("do the dishes", "after the party", Status.NEW);
         Task task2 = new Task("do hwk", "math, biology", Status.IN_PROGRESS);
         Task task3 = new Task("wallpaper", "in the hallway", Status.DONE);
