@@ -6,6 +6,8 @@ public class InMemoryTaskManager implements Manager {
     private  HashMap<Integer, Task> taskList = new HashMap<>();
     private HashMap<Integer, Epic> epicList = new HashMap<>();
     private HashMap<Integer, Subtask> subtaskList = new HashMap<>();
+    public InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+
     private int count = 0;
     @Override
     public void createTask(Task task) {
@@ -63,6 +65,7 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public Task getTaskById(int id) {
         if (taskList.containsKey(id)) {
+            historyManager.add(taskList.get(id));
             return taskList.get(id);
         } else {
             System.out.println("no task by id" + id);
@@ -72,6 +75,7 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public Epic getEpicById(int id) {
         if  (epicList.containsKey(id)) {
+            historyManager.add(epicList.get(id));
             return epicList.get(id);
         } else {
             System.out.println("no task by id" + id);
@@ -81,6 +85,7 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public Subtask getSubtaskById(int id) {
         if (subtaskList.containsKey(id)){
+            historyManager.add(subtaskList.get(id));
             return subtaskList.get(id);
         }
         System.out.println("no task by id" + id);
@@ -167,6 +172,10 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeAllSubtasks() {
         subtaskList.clear();
+    }
+
+    public ArrayList<Task> showHistory() {
+        return historyManager.getHistory();
     }
 }
 
