@@ -174,15 +174,12 @@ public class InMemoryTaskManager implements Manager {
         subtaskList.clear();
     }
 
+    @Override
     public ArrayList<Task> showHistory() {
         return historyManager.getHistory();
     }
     public int returnLastTaskId() {
-        int id = 0;
-        for (int num : taskList.keySet()){
-            id = num;
-        }
-        return id;
+        return count - 1;
     }
 
 }
