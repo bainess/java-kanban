@@ -40,4 +40,6 @@ public interface Manager {
     void removeAllEpics();
 
     void removeAllSubtasks();
+
+    ArrayList<Task> showHistory();
 }
