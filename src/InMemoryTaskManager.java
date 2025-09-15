@@ -11,30 +11,24 @@ public class InMemoryTaskManager implements Manager {
     private int count = 0;
     @Override
     public void createTask(Task task) {
-        Task newTask = new Task(task.getTitle(), task.getDescription(), task.getStatus());
-        int id = count++;
-        newTask.setId(id);
-        taskList.put(id, newTask);
+       int id = count++;
+        task.setId(id);
+        taskList.put(id, task);
     }
 
     @Override
     public void createEpic(Epic epic) {
-        Epic newEpic = new Epic(epic.getTitle(), epic.getDescription());
         int id = count++;
-        newEpic.setId(id);
-        epicList.put(id, newEpic);
-        newEpic.setStatus(subtaskList);
+        epic.setId(id);
+        epicList.put(id, epic);
+        epic.setStatus(subtaskList);
     }
     @Override
     public void createSubtask(Subtask subtask) {
-        Subtask newSubask = new Subtask(subtask.getTitle(),
-                subtask.getDescription(),
-                subtask.getStatus(),
-                subtask.getEpicId() );
         int id = count++;
-        newSubask.setId(id);
-        int epicId = newSubask.getEpicId();
-        subtaskList.put(id, newSubask);
+        subtask.setId(id);
+        int epicId = subtask.getEpicId();
+        subtaskList.put(id, subtask);
         Epic epic = epicList.get(epicId);
         epic.addSubtaskId(id);
         epic.setStatus(subtaskList);
