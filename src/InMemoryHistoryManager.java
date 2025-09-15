@@ -8,14 +8,11 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (historyList.size() < 10) {
             historyList.add(task);
         } else {
-            ArrayList<Task> historyListTemp = new ArrayList<>();
-            for (int i = 1; i < historyList.size(); i++) {
-                historyListTemp.add(historyList.get(i));
-            }
-            historyListTemp.add(task);
-            historyList = historyListTemp;
+            historyList.remove(0);
+            historyList.add(task);
         }
     }
+
     @Override
     public ArrayList<Task> getHistory() {
         return historyList;
