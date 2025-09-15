@@ -6,6 +6,7 @@ class ManagersTest {
     @Test
     void shouldBeNotNullWhenCallGetDefault(){
         Managers managers = new Managers();
-        assertNotNull(managers);
+        managers.getDefault();
+        assertTrue(managers.getDefault() instanceof InMemoryTaskManager);
     }
 }

@@ -1,10 +1,12 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
 class InMemoryTaskManagerTest {
     static InMemoryTaskManager taskManager;
     @BeforeAll
-    static void beforeAll() {
+     static void beforeAll() {
         taskManager = new InMemoryTaskManager();
         Task task1 = new Task("do the dishes", "after the party", Status.NEW);
         Task task2 = new Task("do hwk", "math, biology", Status.IN_PROGRESS);
@@ -26,6 +28,8 @@ class InMemoryTaskManagerTest {
 
         taskManager.createSubtask(subtask1);
         taskManager.createSubtask(subtask2);
+        taskManager.createSubtask(subtask3);
+        taskManager.createSubtask(subtask4);
     }
     @Test
     void shouldBeEqualTasksIfEqualId() {
@@ -61,4 +65,37 @@ class InMemoryTaskManagerTest {
         int size2 = taskManager.getAllEpic().size();
         assertNotEquals(size1,size2);
     }
+    @Test
+    void shouldReturnTaskById() {
+        Task task = taskManager.getTaskById(0);
+        assertEquals(0, task.getId());
+    }
+
+    @Test
+    void shouldReturnEpicById() {
+        Epic task = taskManager.getEpicById(4);
+        assertEquals(4, task.getId());
+    }
+    @Test
+    void shouldReturnSubtaskById() {
+        Subtask task = taskManager.getSubtaskById(7);
+        assertEquals(7, task.getId());
+    }
+    @Test
+    void shouldReturnNewIdWhenIdIsGiven() {
+        Task task = taskManager.getTaskById(0);
+        taskManager.createTask(task);
+        assertNotEquals(0,  taskManager.returnLastTaskId() );
+    }
+    @Test
+    void shouldReturnEqualsIfTasksMatch() {
+        Task task = taskManager.getTaskById(0);
+        taskManager.createTask(task);
+        int id = taskManager.returnLastTaskId();
+        Task newTask = taskManager.getTaskById(id);
+        assertEquals(task.getTitle(), newTask.getTitle());
+        assertEquals(task.getDescription(), newTask.getDescription());
+        assertEquals(task.getStatus(), newTask.getStatus());
+    }
+
 }
