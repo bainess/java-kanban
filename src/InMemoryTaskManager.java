@@ -23,7 +23,7 @@ public class InMemoryTaskManager implements Manager {
         int id = count++;
         epic.setId(id);
         epicList.put(id, epic);
-        epic.setStatus(subtaskList);
+        epic.setEpicStatus(subtaskList);
     }
     @Override
     public void createSubtask(Subtask subtask) {
@@ -33,7 +33,7 @@ public class InMemoryTaskManager implements Manager {
         subtaskList.put(id, subtask);
         Epic epic = epicList.get(epicId);
         epic.addSubtaskId(id);
-        epic.setStatus(subtaskList);
+        epic.setEpicStatus(subtaskList);
     }
 
     @Override
@@ -111,7 +111,7 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void editEpic(Epic epic){
         int id = epic.getId();
-        epic.setStatus(subtaskList);
+        epic.setEpicStatus(subtaskList);
         if (epicList.containsKey(id)) {
             epicList.put(id, epic);
         }
@@ -123,7 +123,7 @@ public class InMemoryTaskManager implements Manager {
             subtaskList.put(id, subtask);
         }
         Epic epic = epicList.get(subtask.getEpicId());
-        epic.setStatus(subtaskList);
+        epic.setEpicStatus(subtaskList);
     }
     @Override
     public List<Task> getAllTasks() {

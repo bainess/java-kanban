@@ -41,7 +41,7 @@ public class Task {
         return id;
     }
 
-    public void setStatus(Map<Integer, Subtask> status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

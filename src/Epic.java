@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Epic extends Task{
    private List<Integer> subtaskIds = new ArrayList<>();
@@ -18,11 +19,12 @@ public class Epic extends Task{
             int subId = subtaskIds.get(i);
             if (subId == id) {
                 subtaskIds.remove(i);
+                return;
             }
         }
     }
 
-    public void setStatus(HashMap<Integer, Subtask> subtaskMap) {
+    public void setEpicStatus(Map<Integer, Subtask> subtaskMap) {
         int statusNew = 0;
         int statusDone = 0;
         for (Subtask subtask : subtaskMap.values()) {
