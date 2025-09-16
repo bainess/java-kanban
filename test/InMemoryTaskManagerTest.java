@@ -83,13 +83,18 @@ class InMemoryTaskManagerTest {
     void shouldReturnNewIdWhenIdIsGiven() {
         Task task = taskManager.getTaskById(0);
         taskManager.createTask(task);
-        assertNotEquals(0,  taskManager.returnLastTaskId() );
+        int id = 0;
+        for (Task t : taskManager.getAllTasks()){
+            id = t.getId();
+        }
+        assertNotEquals(0,  id );
     }
     @Test
     void shouldReturnEqualsIfTasksMatch() {
         Task task = taskManager.getTaskById(0);
         taskManager.createTask(task);
-        int id = taskManager.returnLastTaskId();
+        int id = 0;
+        for (Task t : taskManager.getAllTasks()) id = t.getId();
         Task newTask = taskManager.getTaskById(id);
         assertEquals(task.getTitle(), newTask.getTitle());
         assertEquals(task.getDescription(), newTask.getDescription());

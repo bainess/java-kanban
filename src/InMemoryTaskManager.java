@@ -180,9 +180,6 @@ public class InMemoryTaskManager implements Manager {
     public List<Task> showHistory() {
         return historyManager.getHistory();
     }
-    public int returnLastTaskId() {
-        return count - 1;
-    }
 
 }
 

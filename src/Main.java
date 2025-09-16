@@ -3,7 +3,7 @@ public class Main {
 
     public static void main(String[] args) {
         Managers man = new Managers();
-        InMemoryTaskManager taskManager = man.getDefault();
+        Manager taskManager = man.getDefault();
         Task task1 = new Task("do the dishes", "after the party", Status.NEW);
         Task task2 = new Task("do hwk", "math, biology", Status.IN_PROGRESS);
         Task task3 = new Task("wallpaper", "in the hallway", Status.DONE);
