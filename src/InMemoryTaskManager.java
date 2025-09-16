@@ -1,12 +1,14 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class InMemoryTaskManager implements Manager {
-    private  HashMap<Integer, Task> taskList = new HashMap<>();
-    private HashMap<Integer, Epic> epicList = new HashMap<>();
-    private HashMap<Integer, Subtask> subtaskList = new HashMap<>();
-    public InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+    private Map<Integer, Task> taskList = new HashMap<>();
+    private Map<Integer, Epic> epicList = new HashMap<>();
+    private Map<Integer, Subtask> subtaskList = new HashMap<>();
+    private HistoryManager historyManager = new InMemoryHistoryManager();
 
     private int count = 0;
     @Override
@@ -44,7 +46,7 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeEpicById(int id){
         if (epicList.containsKey(id)){
-            ArrayList<Integer> epicIds = epicList.get(id).subtaskIds;
+            List<Integer> epicIds = epicList.get(id).getSubtaskIds();
             for (int i = 0; i < epicIds.size(); i++) {
                 subtaskList.remove(i);
             }
@@ -65,7 +67,7 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public Task getTaskById(int id) {
         if (taskList.containsKey(id)) {
-            historyManager.add(taskList.get(id));
+            historyManager.addToHistoryList(taskList.get(id));
             return taskList.get(id);
         } else {
             System.out.println("no task by id" + id);
@@ -75,7 +77,7 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public Epic getEpicById(int id) {
         if  (epicList.containsKey(id)) {
-            historyManager.add(epicList.get(id));
+            historyManager.addToHistoryList(epicList.get(id));
             return epicList.get(id);
         } else {
             System.out.println("no task by id" + id);
@@ -85,7 +87,7 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public Subtask getSubtaskById(int id) {
         if (subtaskList.containsKey(id)){
-            historyManager.add(subtaskList.get(id));
+            historyManager.addToHistoryList(subtaskList.get(id));
             return subtaskList.get(id);
         }
         System.out.println("no task by id" + id);
@@ -124,15 +126,15 @@ public class InMemoryTaskManager implements Manager {
         epic.setStatus(subtaskList);
     }
     @Override
-    public ArrayList<Task> getAllTasks() {
-        ArrayList<Task> taskArray= new ArrayList<>();
+    public List<Task> getAllTasks() {
+        List<Task> taskArray= new ArrayList<>();
         for (Task task : taskList.values()) taskArray.add(task);
         return taskArray;
     }
 
     @Override
-    public ArrayList<Epic> getAllEpic(){
-        ArrayList<Epic> epicArray= new ArrayList<>();
+    public List<Epic> getAllEpic(){
+        List<Epic> epicArray= new ArrayList<>();
         for (Epic epic : epicList.values()) {
             epicArray.add(epic);
         }
@@ -140,8 +142,8 @@ public class InMemoryTaskManager implements Manager {
     }
 
     @Override
-    public ArrayList<Subtask> getAllSubtasks(){
-        ArrayList<Subtask> subtaskArray= new ArrayList<>();
+    public List<Subtask> getAllSubtasks(){
+        List<Subtask> subtaskArray= new ArrayList<>();
         for (Subtask subtask : subtaskList.values()) {
             subtaskArray.add(subtask);
         }
@@ -149,9 +151,9 @@ public class InMemoryTaskManager implements Manager {
     }
 
     @Override
-    public ArrayList<Subtask> getAllSubtasksByEpic(int id) {
+    public List<Subtask> getAllSubtasksByEpic(int id) {
         Epic epic = epicList.get(id);
-        ArrayList<Subtask> subtasksOfEpic = new ArrayList<>();
+        List<Subtask> subtasksOfEpic = new ArrayList<>();
         for (Integer i : epic.getSubtaskIds()) {
             subtasksOfEpic.add(subtaskList.get(i));
         }
@@ -175,7 +177,7 @@ public class InMemoryTaskManager implements Manager {
     }
 
     @Override
-    public ArrayList<Task> showHistory() {
+    public List<Task> showHistory() {
         return historyManager.getHistory();
     }
     public int returnLastTaskId() {

@@ -44,7 +44,7 @@ class InMemoryHistoryManagerTest {
         taskManager.getSubtaskById(7);
         taskManager.getSubtaskById(8);
         ArrayList<Task> previousHitoryVersion = new ArrayList<>();
-        for (Task task : taskManager.historyManager.getHistory()){
+        for (Task task : taskManager.showHistory()){
             previousHitoryVersion.add(task);
         }
         taskManager.createEpic(new Epic("draw", "draw a painting on the wall"));

@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.List;
 
 public interface Manager {
     void createTask(Task task);
@@ -27,13 +27,13 @@ public interface Manager {
 
     void editSubtask(Subtask subtask);
 
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
-    ArrayList<Epic> getAllEpic();
+    List<Epic> getAllEpic();
 
-    ArrayList<Subtask> getAllSubtasks();
+    List<Subtask> getAllSubtasks();
 
-    ArrayList<Subtask> getAllSubtasksByEpic(int id);
+    List<Subtask> getAllSubtasksByEpic(int id);
 
     void removeAllTasks();
 
@@ -41,5 +41,5 @@ public interface Manager {
 
     void removeAllSubtasks();
 
-    ArrayList<Task> showHistory();
+   List<Task> showHistory();
 }

@@ -1,11 +1,11 @@
-import java.util.stream.StreamSupport;
+import java.util.Map;
 
 public class Task {
 
     protected String title;
     protected String description;
     protected int id;
-    Status status;
+    protected Status status;
 
    public Task(String title, String description) {
         this.title = title;
@@ -41,7 +41,7 @@ public class Task {
         return id;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(Map<Integer, Subtask> status) {
         this.status = status;
     }
 

@@ -1,4 +1,8 @@
 public class Managers {
-    public <T> Manager getDefault() {
+    public InMemoryTaskManager getDefault() {
         return new InMemoryTaskManager();    }
+    public InMemoryHistoryManager getHistoryManager() {
+        return new InMemoryHistoryManager();
+    }
 }
+
