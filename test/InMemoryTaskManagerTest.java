@@ -54,6 +54,7 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldReturnTaskById() {
         Task task = taskManager.getTaskById(0);
+        taskManager.removeAllTasks();
         assertEquals(0, task.getId());
     }
 
