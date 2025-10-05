@@ -24,22 +24,25 @@ class InMemoryHistoryManagerTest {
     @Test
     void shouldPreservePreviousTaskVersionWhenNewTaskAdded() {
         for (int i = 0; i < 9; i++) {
-            if (taskManager.getTaskById(i) != null) {
+            if (taskManager.getTaskById(i) != null && taskManager.getTaskById(i).getClass().getName().equals("Task")) {
                 taskManager.getTaskById(i);
-            } else if (taskManager.getTaskById(i) == null && taskManager.getEpicById(i) != null) {
+            } else if (taskManager.getTaskById(i) == null && taskManager.getEpicById(i) != null && taskManager
+                    .getEpicById(i).getClass().getName().equals("Epic")) {
                 taskManager.getEpicById(i);
-            } else {
+            } else if (taskManager.getTaskById(i) == null && taskManager.getEpicById(i) == null && taskManager
+                    .getSubtaskById(i) != null && taskManager
+                    .getSubtaskById(i).getClass().getName().equals("Subtask")) {
                 taskManager.getSubtaskById(i);
             }
         }
-        ArrayList<Task> previousHitoryVersion = new ArrayList<>();
+        ArrayList<Task> previousHistoryVersion = new ArrayList<>();
         for (Task task : taskManager.showHistory()) {
-            previousHitoryVersion.add(task);
+            previousHistoryVersion.add(task);
         }
         taskManager.createEpic(new Epic("draw", "draw a painting on the wall"));
         for (int i = 0; i < taskManager.showHistory().size() - 2; i++) {
             Task task = taskManager.showHistory().get(i);
-            assertEquals(previousHitoryVersion.get(i), task);
+            assertEquals(previousHistoryVersion.get(i), task);
         }
 
     }
