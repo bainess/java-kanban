@@ -5,10 +5,10 @@ import java.util.Map;
 
 
 public class InMemoryTaskManager implements Manager {
-    private Map<Integer, Task> taskList = new HashMap<>();
-    private Map<Integer, Epic> epicList = new HashMap<>();
-    private Map<Integer, Subtask> subtaskList = new HashMap<>();
-    private HistoryManager historyManager = new InMemoryHistoryManager();
+    private final Map<Integer, Task> taskList = new HashMap<>();
+    private final Map<Integer, Epic> epicList = new HashMap<>();
+    private final Map<Integer, Subtask> subtaskList = new HashMap<>();
+    private final HistoryManager historyManager = new InMemoryHistoryManager();
 
     private int count = 0;
     @Override
@@ -66,8 +66,8 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public Task getTaskById(int id) {
-        boolean flag = taskList.containsKey(id);
-        if (flag) {
+        boolean containsKey = taskList.containsKey(id);
+        if (containsKey) {
             historyManager.addToHistoryList(taskList.get(id));
             return taskList.get(id);
         } else {

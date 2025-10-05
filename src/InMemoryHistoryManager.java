@@ -8,8 +8,8 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void addToHistoryList(Task task) {
-        boolean flag = historyListIdHolder.containsKey(task.getId());
-        if (flag) {
+        boolean containsKey = historyListIdHolder.containsKey(task.getId());
+        if (containsKey) {
             removeNode(historyListIdHolder.get(task.getId()));
             historyListIdHolder.remove(task.getId());
 
