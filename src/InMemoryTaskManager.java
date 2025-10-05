@@ -66,11 +66,12 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public Task getTaskById(int id) {
-        if (taskList.containsKey(id)) {
+        boolean flag = taskList.containsKey(id);
+        if (flag) {
             historyManager.addToHistoryList(taskList.get(id));
             return taskList.get(id);
         } else {
-            System.out.println("no task by id" + id);
+            System.out.println("no task by id " + id);
             return null;
         }
     }
@@ -80,7 +81,7 @@ public class InMemoryTaskManager implements Manager {
             historyManager.addToHistoryList(epicList.get(id));
             return epicList.get(id);
         } else {
-            System.out.println("no task by id" + id);
+            System.out.println("no epic by id " + id);
             return null;
         }
     }
@@ -90,7 +91,7 @@ public class InMemoryTaskManager implements Manager {
             historyManager.addToHistoryList(subtaskList.get(id));
             return subtaskList.get(id);
         }
-        System.out.println("no task by id" + id);
+        System.out.println("no subtask by id " + id);
         return null;
     }
 
@@ -177,7 +178,7 @@ public class InMemoryTaskManager implements Manager {
     }
 
     @Override
-    public List<Task> showHistory() {
+    public ArrayList<Task> showHistory() {
         return historyManager.getHistory();
     }
 
