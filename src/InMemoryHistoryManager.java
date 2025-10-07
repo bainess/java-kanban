@@ -23,6 +23,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         return getTasks();
     }
 
+    @Override
+    public void remove(int id) {
+        Node<Task> node = historyListIdHolder.get(id);
+        removeNode(node);
+    }
+
     public void addLast(Task task) {
         final Node<Task> oldEnd = end;
         Node<Task> thisNode = new Node<>(oldEnd, task, null);
@@ -57,5 +63,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyListIdHolder.remove(node.task.getId());
         size = size - 1;
     }
+
 
 }
