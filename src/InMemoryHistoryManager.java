@@ -4,7 +4,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node<Task> start;
     private Node<Task> end;
     int size = 0;
-    Map<Integer, Node<Task>> historyListIdHolder= new HashMap<>();
+    Map<Integer, Node<Task>> historyListIdHolder = new HashMap<>();
 
     @Override
     public void addToHistoryList(Task task) {
@@ -56,7 +56,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void removeNode(Node<Task> node) {
         final Node<Task> prevNode = node.prev;
         final Node<Task> nextNode = node.next;
-        if (prevNode != null ) prevNode.next = node.next;
+        if (prevNode != null) prevNode.next = node.next;
         if (start.task.equals(node.task)) start = nextNode;
         if (nextNode != null) nextNode.prev = node.prev;
         if (end.task.equals(node.task)) end = prevNode;
