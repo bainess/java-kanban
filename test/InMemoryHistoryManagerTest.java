@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,8 +8,8 @@ import java.util.List;
 class InMemoryHistoryManagerTest {
     static InMemoryTaskManager taskManager;
 
-    @BeforeAll
-    static void beforeAll() {
+    @BeforeEach
+    void beforeEach() {
         taskManager = new InMemoryTaskManager();
         taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW));
         taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS));
@@ -39,10 +40,11 @@ class InMemoryHistoryManagerTest {
         assertEquals(2, taskManager.showHistory().size());
     }
     @Test
-    void shouldRemoveTaskTaskFromBeginningOfList(){
+    void shouldRemoveTaskTaskFromBeginningOfList() {
         taskManager.getTaskById(0);
         taskManager.getTaskById(1);
         taskManager.getTaskById(0);
+        System.out.println(taskManager.showHistory().getFirst().getId());
         assertEquals(1, taskManager.showHistory().getFirst().getId());
     }
     @Test
