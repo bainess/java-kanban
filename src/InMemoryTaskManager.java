@@ -40,6 +40,7 @@ public class InMemoryTaskManager implements Manager {
     public void removeTaskById(int id){
         if (taskList.containsKey(id)) {
             taskList.remove(id);
+            historyManager.remove(id);
         }
     }
 
@@ -51,6 +52,7 @@ public class InMemoryTaskManager implements Manager {
                 subtaskList.remove(i);
             }
             epicList.remove(id);
+            historyManager.remove(id);
         }
     }
     @Override
@@ -61,6 +63,7 @@ public class InMemoryTaskManager implements Manager {
             Epic epic = epicList.get(epicId);
             epic.removeSubTaskId(id);
             subtaskList.remove(id);
+            historyManager.remove(id);
         }
     }
 
