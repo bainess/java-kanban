@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
+import java.util.List;
 
 class InMemoryHistoryManagerTest {
     static InMemoryTaskManager taskManager;
@@ -19,57 +20,38 @@ class InMemoryHistoryManagerTest {
         taskManager.createSubtask(new Subtask("get the dustpan", "", Status.NEW, 3));
         taskManager.createSubtask(new Subtask("buy veggies", "tomatoes, mushrooms", Status.DONE, 4));
         taskManager.createSubtask(new Subtask("cut ingredients", "dice, slice", Status.DONE, 4));
+        taskManager.createTask(new Task("tests", "complete tests for tm", Status.IN_PROGRESS));
     }
 
     @Test
-    void shouldPreservePreviousTaskVersionWhenNewTaskAdded() {
-        for (int i = 0; i < 9; i++) {
-            if (taskManager.getTaskById(i) != null && taskManager.getTaskById(i).getClass().getName().equals("Task")) {
-                taskManager.getTaskById(i);
-            } else if (taskManager.getTaskById(i) == null && taskManager.getEpicById(i) != null && taskManager
-                    .getEpicById(i).getClass().getName().equals("Epic")) {
-                taskManager.getEpicById(i);
-            } else if (taskManager.getTaskById(i) == null && taskManager.getEpicById(i) == null && taskManager
-                    .getSubtaskById(i) != null && taskManager
-                    .getSubtaskById(i).getClass().getName().equals("Subtask")) {
-                taskManager.getSubtaskById(i);
-            }
-        }
-        ArrayList<Task> previousHistoryVersion = new ArrayList<>();
-        for (Task task : taskManager.showHistory()) {
-            previousHistoryVersion.add(task);
-        }
-        taskManager.createEpic(new Epic("draw", "draw a painting on the wall"));
-        for (int i = 0; i < taskManager.showHistory().size() - 2; i++) {
-            Task task = taskManager.showHistory().get(i);
-            assertEquals(previousHistoryVersion.get(i), task);
-        }
+   void shouldAddNewTask() {
+        int oldhistory =  taskManager.showHistory().size();
+        taskManager.getTaskById(0);
+        int newHistory = taskManager.showHistory().size();
+        assertNotEquals(oldhistory, newHistory);
 
     }
-
     @Test
-    void shouldRemoveFirstItemWhenHistoryIsOverloaded() {
-        taskManager.createEpic(new Epic("draw", "draw a painting on the wall"));
-        taskManager.createSubtask(new Subtask("buy", "buy brushes and paints", Status.IN_PROGRESS, 9));
-        for (int i = 0; i < 11; i++) {
-            if (taskManager.getTaskById(i) != null) {
-                taskManager.getTaskById(i);
-            } else if (taskManager.getTaskById(i) == null && taskManager.getEpicById(i) != null) {
-                taskManager.getEpicById(i);
-            } else {
-                taskManager.getSubtaskById(i);
-            }
-        }
-        ArrayList<Task> previousHistoryVersion = new ArrayList<>();
-        for (Task task : taskManager.showHistory()){
-            previousHistoryVersion.add(task);
-        }
-        taskManager.createSubtask(new Subtask("choose", "choose a pic",Status.IN_PROGRESS, 9));
-        taskManager.getSubtaskById(11);
-        for (int i = 0; i < taskManager.showHistory().size() - 2; i++ ){
-            Task task1 = taskManager.showHistory().get(i);
-            Task task0 = previousHistoryVersion.get(i + 1);
-            assertEquals(task0, task1);
-        }
+    void shouldRemoveRepeatedTask() {
+        taskManager.getTaskById(0);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(0);
+        assertEquals(2, taskManager.showHistory().size());
+    }
+    @Test
+    void shouldRemoveTaskTaskFromBeginningOfList(){
+        taskManager.getTaskById(0);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(0);
+        assertEquals(1, taskManager.showHistory().getFirst().getId());
+    }
+    @Test
+    void shouldRemoveTaskFromMiddleToEndWhenRepeated() {
+        taskManager.getTaskById(0);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
+        assertNotEquals(1, taskManager.showHistory().get(1).getId());
+        assertEquals(1, taskManager.showHistory().getLast().getId());
     }
 }
