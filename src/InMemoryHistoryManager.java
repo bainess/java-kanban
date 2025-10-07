@@ -14,16 +14,12 @@ public class InMemoryHistoryManager implements HistoryManager {
             historyListIdHolder.remove(task.getId());
 
         }
-
-        if (size > 9) {
-            removeFirst();
-        }
         addLast(task);
 
     }
 
     @Override
-    public ArrayList<Task> getHistory() {
+    public List<Task> getHistory() {
         return getTasks();
     }
 
@@ -43,7 +39,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public ArrayList<Task> getTasks() {
         ArrayList<Task> taskList = new ArrayList<>();
         Node<Task> currHead = start;
-        if (currHead == null) throw new NoSuchElementException();
+        if (currHead == null) return new ArrayList<>();
         while (currHead != null) {
             taskList.add(currHead.task);
             currHead = currHead.next;
