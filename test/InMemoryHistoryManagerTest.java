@@ -54,4 +54,12 @@ class InMemoryHistoryManagerTest {
         assertNotEquals(1, taskManager.showHistory().get(1).getId());
         assertEquals(1, taskManager.showHistory().getLast().getId());
     }
+    @Test
+    void shouldRemoveRemovedTaskFromHistory() {
+        taskManager.getTaskById(0);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.removeTaskById(0);
+        assertEquals(2, taskManager.showHistory().size());
+    }
 }
