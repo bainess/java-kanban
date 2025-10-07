@@ -30,7 +30,7 @@ public class Task {
 
     public void setDescription(String description) {
        this.description = description;
-    }
+   }
     public String getDescription() {
        return this.description;
    }
@@ -58,7 +58,7 @@ public class Task {
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status;
    }
 }
