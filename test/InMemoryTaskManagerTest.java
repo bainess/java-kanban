@@ -86,7 +86,6 @@ class InMemoryTaskManagerTest {
     }
     @Test
     void shouldRemoveIdOfRemovedSubtaskFromEpic() {
-        taskManager.getSubtaskById(5);
         taskManager.removeSubtaskById(5);
         System.out.println(taskManager.getEpicById(3).getSubtaskIds().contains(5));
         assertFalse(taskManager.getEpicById(3).getSubtaskIds().contains(5));
