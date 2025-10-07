@@ -117,6 +117,7 @@ public class InMemoryTaskManager implements Manager {
                 taskList.put(id, task);
             }
     }
+
     @Override
     public void editEpic(Epic epic) {
         int id = epic.getId();
@@ -125,6 +126,7 @@ public class InMemoryTaskManager implements Manager {
             epicList.put(id, epic);
         }
     }
+
     @Override
     public void editSubtask(Subtask subtask) {
         int id = subtask.getId();
@@ -134,16 +136,17 @@ public class InMemoryTaskManager implements Manager {
         Epic epic = epicList.get(subtask.getEpicId());
         epic.setEpicStatus(subtaskList);
     }
+
     @Override
     public List<Task> getAllTasks() {
-        List<Task> taskArray= new ArrayList<>();
+        List<Task> taskArray = new ArrayList<>();
         for (Task task : taskList.values()) taskArray.add(task);
         return taskArray;
     }
 
     @Override
     public List<Epic> getAllEpic() {
-        List<Epic> epicArray= new ArrayList<>();
+        List<Epic> epicArray = new ArrayList<>();
         for (Epic epic : epicList.values()) {
             epicArray.add(epic);
         }
@@ -152,7 +155,7 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public List<Subtask> getAllSubtasks() {
-        List<Subtask> subtaskArray= new ArrayList<>();
+        List<Subtask> subtaskArray = new ArrayList<>();
         for (Subtask subtask : subtaskList.values()) {
             subtaskArray.add(subtask);
         }
