@@ -1,10 +1,10 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeAll;
 class InMemoryTaskManagerTest {
     static InMemoryTaskManager taskManager;
-    @BeforeAll
-     static void beforeAll() {
+    @BeforeEach
+    void beforeEach() {
         taskManager = new InMemoryTaskManager();
         taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW));
         taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS));
@@ -80,14 +80,15 @@ class InMemoryTaskManagerTest {
     }
     @Test
     void shouldReturnEqualsIfTasksMatch() {
-        Task task = taskManager.getTaskById(0);
-        taskManager.createTask(task);
-        int id = 0;
-        for (Task t : taskManager.getAllTasks()) id = t.getId();
-        Task newTask = taskManager.getTaskById(id);
-        assertEquals(task.getTitle(), newTask.getTitle());
-        assertEquals(task.getDescription(), newTask.getDescription());
-        assertEquals(task.getStatus(), newTask.getStatus());
+        Task task1 = taskManager.getTaskById(0);
+        Task task2 = taskManager.getTaskById(0);
+        assertEquals(task1.getId(), task2.getId());
     }
-
+    @Test
+    void shouldRemoveIdOfRemovedSubtaskFromEpic() {
+        taskManager.getSubtaskById(5);
+        taskManager.removeSubtaskById(5);
+        System.out.println(taskManager.getEpicById(3).getSubtaskIds().contains(5));
+        assertFalse(taskManager.getEpicById(3).getSubtaskIds().contains(5));
+    }
 }

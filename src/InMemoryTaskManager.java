@@ -61,12 +61,13 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeSubtaskById(int id) {
         if (subtaskList.containsKey(id)) {
+            historyManager.remove(id);
             Subtask subToRemove = subtaskList.get(id);
             int epicId = subToRemove.getEpicId();
             Epic epic = epicList.get(epicId);
             epic.removeSubTaskId(id);
             subtaskList.remove(id);
-            historyManager.remove(id);
+
         }
     }
 
@@ -192,6 +193,5 @@ public class InMemoryTaskManager implements Manager {
     public List<Task> showHistory() {
         return historyManager.getHistory();
     }
-
-}
+    }
 
