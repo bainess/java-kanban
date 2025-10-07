@@ -1,9 +1,9 @@
-public class Node<Task> {
+public class Node<T> {
     public Task task;
-    public Node<Task> next;
-    public Node<Task> prev;
+    public Node<T> next;
+    public Node<T> prev;
 
-    public Node(Node<Task> prev, Task task, Node<Task> next){
+    public Node(Node<T> prev, Task task, Node<T> next) {
         this.task = task;
         this.next = next;
         this.prev = prev;
