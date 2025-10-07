@@ -58,13 +58,4 @@ public class InMemoryHistoryManager implements HistoryManager {
         size = size - 1;
     }
 
-    public void removeFirst() {
-        historyListIdHolder.remove(start.task.getId());
-         final Node<Task> nextNode = start.next;
-         if (nextNode == null) throw new NoSuchElementException();
-         nextNode.prev = null;
-         start = nextNode;
-         size = size -1;
-    }
-
 }
