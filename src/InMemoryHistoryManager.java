@@ -3,19 +3,12 @@ import java.util.*;
 public class InMemoryHistoryManager implements HistoryManager {
     private Node<Task> start;
     private Node<Task> end;
-    int size = 0;
-    Map<Integer, Node<Task>> historyListIdHolder = new HashMap<>();
+    private Map<Integer, Node<Task>> historyListIdHolder = new HashMap<>();
 
     @Override
     public void addToHistoryList(Task task) {
-        boolean containsKey = historyListIdHolder.containsKey(task.getId());
-        if (containsKey) {
-            removeNode(historyListIdHolder.get(task.getId()));
-            historyListIdHolder.remove(task.getId());
-
-        }
+        remove(task.getId());
         addLast(task);
-
     }
 
     @Override
@@ -38,10 +31,8 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (oldEnd == null)
             start = thisNode;
         else
-            oldEnd.next = thisNode;
+            oldEnd.setNextNode(thisNode);
         historyListIdHolder.put(task.getId(), thisNode);
-        size++;
-
     }
 
     public ArrayList<Task> getTasks() {
@@ -49,21 +40,20 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node<Task> currHead = start;
         if (currHead == null) return new ArrayList<>();
         while (currHead != null) {
-            taskList.add(currHead.task);
-            currHead = currHead.next;
+            taskList.add(currHead.getTaskFromNode());
+            currHead = currHead.getNextNode();
         }
         return taskList;
     }
 
     public void removeNode(Node<Task> node) {
-        final Node<Task> prevNode = node.prev;
-        final Node<Task> nextNode = node.next;
-        if (prevNode != null) prevNode.next = node.next;
-        if (start.task.equals(node.task)) start = nextNode;
-        if (nextNode != null) nextNode.prev = node.prev;
-        if (end.task.equals(node.task)) end = prevNode;
-        historyListIdHolder.remove(node.task.getId());
-        size = size - 1;
+        final Node<Task> prevNode = node.getPrevNode();
+        final Node<Task> nextNode = node.getNextNode();
+        if (prevNode != null) prevNode.setNextNode(node.getNextNode());
+        if (start.getTaskFromNode().equals(node.getTaskFromNode())) start = nextNode;
+        if (nextNode != null) nextNode.setPrevNode(node.getPrevNode());
+        if (end.getTaskFromNode().equals(node.getTaskFromNode())) end = prevNode;
+        historyListIdHolder.remove(node.getTaskFromNode().getId());
     }
 
 
