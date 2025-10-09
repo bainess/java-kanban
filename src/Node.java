@@ -1,5 +1,5 @@
 public class Node<T extends Task> {
-    private Task task;
+    private final Task task;
     private Node<T> next;
     private Node<T> prev;
 
