@@ -1,5 +1,3 @@
-import java.util.Map;
-
 public class Task {
 
     protected String title;
@@ -10,7 +8,6 @@ public class Task {
    public Task(String title, String description) {
         this.title = title;
         this.description = description;
-        this.status = status;
     }
 
     public Task(String title, String description, Status status) {
@@ -32,17 +29,19 @@ public class Task {
     }
 
     public void setDescription(String description) {
-        this.description = description;
-    }
-    public String getDescription() {
-        return this.description;
-    }
-    public Integer getId(){
+       this.description = description;
+   }
+
+   public String getDescription() {
+       return this.description;
+   }
+
+   public Integer getId() {
         return id;
-    }
+   }
 
     public void setStatus(Status status) {
-        this.status = status;
+       this.status = status;
     }
 
     public Status getStatus() {
@@ -57,12 +56,11 @@ public class Task {
 
     @Override
     public int hashCode() {
-        int result = 31 * id;
-        return result;
+        return 31 * id;
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status;
-    }
+   }
 }
