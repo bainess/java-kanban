@@ -1,12 +1,13 @@
 import java.io.*;
 import java.util.*;
 
-public class FileBackedTaskManager extends InMemoryTaskManager{
+public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File storageFile = new File("storageFile.csv");
 
     public File getStorageFile() {
         return storageFile;
     }
+
     @Override
     public void createTask(Task task) {
         super.createTask(task);
@@ -36,7 +37,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
     }
 
     @Override
-    public void createSubtask(Subtask subtask){
+    public void createSubtask(Subtask subtask) {
         super.createSubtask(subtask);
         try {
             save();
@@ -227,7 +228,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
         return joinedList;
     }
 
-        private void fromStringToTasksArray  (String taskInString) {
+        private void fromStringToTasksArray (String taskInString) {
             String[] splitString = taskInString.split(", ");
             Type type = Type.valueOf(splitString[1]);
             switch (type) {
@@ -258,7 +259,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
                 int iteration = 0;
                 String line;
                 while ((line = br.readLine()) != null) {
-                    if(iteration == 0) {
+                    if (iteration == 0) {
                         iteration++;
                         continue;
                     }
@@ -269,6 +270,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
             }
 
         }
+
     private Task restoreTaskFromString(int id, String title, String description, Status status) {
         return new Task(id, title, description, status);
     }
@@ -280,6 +282,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
     private Subtask restoreSubaskFromString(int id, String title, String description, Status status,int epicId) {
         return new Subtask(id, title, description, status, epicId);
     }
+
     private enum Type {
         TASK,
         EPIC,
