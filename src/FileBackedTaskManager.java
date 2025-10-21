@@ -2,7 +2,11 @@ import java.io.*;
 import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private final File storageFile = new File("storageFile.csv");
+    private final File storageFile;
+
+    FileBackedTaskManager(String filePath) {
+        storageFile = new File(filePath);
+    }
 
     public File getStorageFile() {
         return storageFile;
@@ -11,195 +15,90 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void createTask(Task task) {
         super.createTask(task);
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void createEpic(Epic epic) {
         super.createEpic(epic);
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void createSubtask(Subtask subtask) {
         super.createSubtask(subtask);
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void removeTaskById(int id) {
         super.removeTaskById(id);
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void removeEpicById(int id) {
         super.removeEpicById(id);
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void removeSubtaskById(int id) {
         super.removeSubtaskById(id);
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void removeAll() {
         super.removeAll();
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void editTask(Task task) {
         super.editTask(task);
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void editEpic(Epic epic) {
         super.editEpic(epic);
-        try {
             save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
     }
 
     @Override
     public void editSubtask(Subtask subtask) {
         super.editSubtask(subtask);
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void removeAllTasks() {
         super.removeAllTasks();
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
     @Override
     public void removeAllEpics() {
         super.removeAllEpics();
-        try {
             save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
     }
 
     @Override
     public void removeAllSubtasks() {
         super.removeAllSubtasks();
-        try {
-            save();
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Cannot save to file");
-            } catch (ManagerSaveException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
+        save();
     }
 
-    public void save() throws IOException {
+    private void save()  {
         try (FileWriter fw = new FileWriter(storageFile)) {
             fw.write("id, type, name, status, description, epic\n");
             List<String> tasksToSave = transferToSave();
             for (String task : tasksToSave) {
                 fw.write(task);
             }
-
-        } catch (ManagerSaveException e) {
-            System.out.printf("Error saving to file%s%n", e.getMessage());
+        } catch (IOException e) {
+            throw new ManagerSaveException("Error saving to file%s%n", e);
         }
     }
 
@@ -235,22 +134,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 case TASK:
                     Task task = restoreTaskFromString(Integer.parseInt(splitString[0]), splitString[2], splitString[4],
                             Status.valueOf(splitString[3]));
-                    addTaskToList(Integer.parseInt(splitString[0]), task);
+                    taskList.put(Integer.parseInt(splitString[0]), task);
                     break;
                 case EPIC:
                     Epic epic = restoreEpicFromString(Integer.parseInt(splitString[0]), splitString[2], splitString[4], Status.valueOf(splitString[3]));
-                   addEpicToList(Integer.parseInt(splitString[0]), epic);
+                   epicList.put(Integer.parseInt(splitString[0]), epic);
                     break;
                 case SUBTASK:
                     Subtask subtask = restoreSubaskFromString(Integer.parseInt(splitString[0]), splitString[2],
                             splitString[4], Status.valueOf(splitString[3]), Integer.parseInt(splitString[5]));
-                    addSubtaskToList(Integer.parseInt(splitString[0]), subtask);
+                    subtaskList.put(Integer.parseInt(splitString[0]), subtask);
                     getEpicById(Integer.parseInt(splitString[5])).addSubtaskId(Integer.parseInt(splitString[0]));
 
                     break;
                 default:
                     throw new ClassCastException("Invalid class");
             }
+        }
+        static FileBackedTaskManager loadFromFile(File file) {
+            FileBackedTaskManager fileBackedManager = new FileBackedTaskManager("storageFile.csv");
+            fileBackedManager.readFromFile("storageFile.csv");
+            return fileBackedManager;
         }
 
         public void readFromFile(String filename) {
@@ -266,7 +170,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     fromStringToTasksArray(line);
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new ManagerSaveException("Failed to read from file", e);
             }
 
         }
@@ -281,11 +185,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private Subtask restoreSubaskFromString(int id, String title, String description, Status status,int epicId) {
         return new Subtask(id, title, description, status, epicId);
-    }
-
-    private enum Type {
-        TASK,
-        EPIC,
-        SUBTASK
     }
 }
