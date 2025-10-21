@@ -1,0 +1,46 @@
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class FileBackedTaskManagerTest {
+    static FileBackedTaskManager fileBackedManager = new FileBackedTaskManager();
+
+
+    @Test
+    void shouldAddTasksToFile(){
+        fileBackedManager.createTask(new Task("read", "read a book", Status.NEW));
+        Assertions.assertTrue( fileBackedManager.getStorageFile().length() > 0);
+        int length = (int) fileBackedManager.getStorageFile().length();
+        fileBackedManager.createEpic(new Epic("build", "build a house"));
+        Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
+        length = (int) fileBackedManager.getStorageFile().length();
+        fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS, 1));
+        Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
+    }
+
+
+    @Test
+    void shoulReturnTasksFromString() {
+        Task task1  = new Task("kick" ,"kick a ball", Status.NEW);
+        fileBackedManager.createTask(task1);
+        Epic epic = new Epic("make", "make a cake");
+        fileBackedManager.createEpic(epic);
+        Subtask subtask = new Subtask("buy", "buy eggs and flour", Status.IN_PROGRESS, epic.getId());
+        fileBackedManager.createSubtask(subtask);
+        Task task2 = new Task("travel", "travel to Spain", Status.DONE);
+        fileBackedManager.createTask(task2);
+
+        fileBackedManager.readFromFile(fileBackedManager.getStorageFile().toString());
+        List<Task> taskList = fileBackedManager.getAllTasks();
+        List<Epic> epicList = fileBackedManager.getAllEpic();
+        List<Subtask> subtaskList = fileBackedManager.getAllSubtasks();
+        Assertions.assertEquals(task1, taskList.get(0));
+        Assertions.assertEquals(task2, taskList.get(1));
+        Assertions.assertEquals(epic, epicList.getFirst());
+        Assertions.assertEquals(subtask, subtaskList.getFirst());
+    }
+}
