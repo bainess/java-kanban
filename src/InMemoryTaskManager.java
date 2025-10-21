@@ -18,13 +18,16 @@ public class InMemoryTaskManager implements Manager {
         task.setId(id);
         addTaskToList(id, task);
     }
-    public void addTaskToList(int id, Task task){
+
+    public void addTaskToList(int id, Task task) {
         taskList.put(id, task);
     }
-    public void addEpicToList(int id, Epic epic){
+
+    public void addEpicToList(int id, Epic epic) {
         epicList.put(id, epic);
     }
-    public void addSubtaskToList(int id, Subtask subtask){
+
+    public void addSubtaskToList(int id, Subtask subtask) {
         subtaskList.put(id, subtask);
 
     }
