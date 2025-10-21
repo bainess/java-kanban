@@ -228,7 +228,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         return joinedList;
     }
 
-        private void fromStringToTasksArray (String taskInString) {
+        private void fromStringToTasksArray(String taskInString) {
             String[] splitString = taskInString.split(", ");
             Type type = Type.valueOf(splitString[1]);
             switch (type) {
