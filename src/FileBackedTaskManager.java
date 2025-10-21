@@ -4,7 +4,9 @@ import java.util.*;
 public class FileBackedTaskManager extends InMemoryTaskManager{
     private final File storageFile = new File("storageFile.csv");
 
-
+    public File getStorageFile() {
+        return storageFile;
+    }
     @Override
     public void createTask(Task task) {
         super.createTask(task);
@@ -230,16 +232,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
             Type type = Type.valueOf(splitString[1]);
             switch (type) {
                 case TASK:
-                    Task task = new Task(splitString[2], splitString[4], Status.valueOf(splitString[3]));
-                    createTask(task);
+                    Task task = restoreTaskFromString(Integer.parseInt(splitString[0]), splitString[2], splitString[4],
+                            Status.valueOf(splitString[3]));
+                    addTaskToList(Integer.parseInt(splitString[0]), task);
                     break;
                 case EPIC:
-                    Epic epic = new Epic(splitString[2], splitString[4]);
-                    createEpic(epic);
+                    Epic epic = restoreEpicFromString(Integer.parseInt(splitString[0]), splitString[2], splitString[4], Status.valueOf(splitString[3]));
+                   addEpicToList(Integer.parseInt(splitString[0]), epic);
                     break;
                 case SUBTASK:
-                    Subtask subtask = new Subtask(splitString[2], splitString[4], Status.valueOf(splitString[3]), Integer.parseInt(splitString[5]));
-                    createSubtask(subtask);
+                    Subtask subtask = restoreSubaskFromString(Integer.parseInt(splitString[0]), splitString[2],
+                            splitString[4], Status.valueOf(splitString[3]), Integer.parseInt(splitString[5]));
+                    addSubtaskToList(Integer.parseInt(splitString[0]), subtask);
+                    getEpicById(Integer.parseInt(splitString[5])).addSubtaskId(Integer.parseInt(splitString[0]));
+
                     break;
                 default:
                     throw new ClassCastException("Invalid class");
@@ -263,7 +269,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager{
             }
 
         }
+    private Task restoreTaskFromString(int id, String title, String description, Status status) {
+        return new Task(id, title, description, status);
+    }
 
+    private Epic restoreEpicFromString(int id, String title, String description, Status status) {
+        return new Epic(id, title, description, status);
+    }
+
+    private Subtask restoreSubaskFromString(int id, String title, String description, Status status,int epicId) {
+        return new Subtask(id, title, description, status, epicId);
+    }
     private enum Type {
         TASK,
         EPIC,
