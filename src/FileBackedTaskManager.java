@@ -168,7 +168,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         iteration++;
                         continue;
                     }
-                    fromStringToTasksArray(line);
+                    fromStringToTasksArray( line);
                 }
                 setCounter();
             } catch (IOException e) {
