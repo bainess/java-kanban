@@ -168,13 +168,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         iteration++;
                         continue;
                     }
-                    fromStringToTasksArray(line);
+                    fromStringToTasksArray( line);
                 }
                 setCounter();
             } catch (IOException e) {
                 throw new ManagerSaveException("Failed to read from file", e);
             }
         }
+    private void setCounter() {
+        int lastId = 0;
+        for (int key : taskList.keySet()) {
+            if (key > lastId) lastId = key;
+        }
+        for (int key : epicList.keySet()) {
+            if (key > lastId) lastId = key;
+        }
+        for (int key : subtaskList.keySet()) {
+            if (key > lastId) lastId = key;
+        }
+        count = lastId + 1;
+
+    }
 
     private void setCounter() {
         int lastId = 0;
