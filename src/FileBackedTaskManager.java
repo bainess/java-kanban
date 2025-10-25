@@ -154,6 +154,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     throw new ClassCastException("Invalid class");
             }
         }
+
         static FileBackedTaskManager loadFromFile(File file) {
             FileBackedTaskManager fileBackedManager = new FileBackedTaskManager("storageFile.csv");
             fileBackedManager.readFromFile("storageFile.csv");
