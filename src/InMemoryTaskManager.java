@@ -15,7 +15,6 @@ public class InMemoryTaskManager implements Manager {
     private void setCounter() {
         int id= 0;
         if (!taskList.isEmpty() && !epicList.isEmpty() && !subtaskList.isEmpty()) {
-            id = 0;
             for (int key : taskList.keySet()) {
                 if (key > id) id = key;
             }
