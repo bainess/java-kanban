@@ -12,15 +12,34 @@ public class InMemoryTaskManager implements Manager {
 
     private int count = 0;
 
+    private void setCounter() {
+        int id= 0;
+        if (!taskList.isEmpty() && !epicList.isEmpty() && !subtaskList.isEmpty()) {
+            id = 0;
+            for (int key : taskList.keySet()) {
+                if (key > id) id = key;
+            }
+            for (int key : epicList.keySet()) {
+                if (key > id) id = key;
+            }
+            for (int key : subtaskList.keySet()) {
+                if (key > id) id = key;
+            }
+        }
+        count = id + 1;
+    }
+
     @Override
     public void createTask(Task task) {
-       int id = count++;
-        task.setId(id);
-        taskList.put(id, task);
+           setCounter();
+           int id = count++;
+           task.setId(id);
+           taskList.put(id, task);
     }
 
     @Override
     public void createEpic(Epic epic) {
+        setCounter();
         int id = count++;
         epic.setId(id);
         epicList.put(id, epic);
@@ -29,6 +48,7 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public void createSubtask(Subtask subtask) {
+        setCounter();
         int id = count++;
         subtask.setId(id);
         subtaskList.put(id, subtask);
