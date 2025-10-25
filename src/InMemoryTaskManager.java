@@ -10,28 +10,11 @@ public class InMemoryTaskManager implements Manager {
     protected final Map<Integer, Subtask> subtaskList = new HashMap<>();
     private final HistoryManager historyManager = new InMemoryHistoryManager();
 
-    private int count = 0;
+    protected int count = 0;
 
-    private void setCounter() {
-        int lastId = 0;
-        if (!taskList.isEmpty() && !epicList.isEmpty() && !subtaskList.isEmpty()) {
-            for (int key : taskList.keySet()) {
-                if (key > lastId) lastId = key;
-            }
-            for (int key : epicList.keySet()) {
-                if (key > lastId) lastId = key;
-            }
-            for (int key : subtaskList.keySet()) {
-                if (key > lastId) lastId = key;
-            }
-            count = lastId + 1;
-        }
-
-    }
 
     @Override
     public void createTask(Task task) {
-           setCounter();
            int id = count++;
            task.setId(id);
            taskList.put(id, task);
@@ -39,7 +22,6 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public void createEpic(Epic epic) {
-        setCounter();
         int id = count++;
         epic.setId(id);
         epicList.put(id, epic);
@@ -48,7 +30,6 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public void createSubtask(Subtask subtask) {
-        setCounter();
         int id = count++;
         subtask.setId(id);
         subtaskList.put(id, subtask);

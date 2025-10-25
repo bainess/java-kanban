@@ -1,5 +1,7 @@
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
 import java.util.List;
 
 public class FileBackedTaskManagerTest {
@@ -14,13 +16,13 @@ public class FileBackedTaskManagerTest {
         fileBackedManager.createEpic(new Epic("build", "build a house"));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
         length = (int) fileBackedManager.getStorageFile().length();
-        fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS, 1));
+        fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS, 3));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
     }
 
 
     @Test
-    void shoulReturnTasksFromString() {
+    void shouldReturnTasksFromString() {
         Task task1  = new Task("kick" ,"kick a ball", Status.NEW);
         fileBackedManager.createTask(task1);
         Epic epic = new Epic("make", "make a cake");
@@ -30,7 +32,7 @@ public class FileBackedTaskManagerTest {
         Task task2 = new Task("travel", "travel to Spain", Status.DONE);
         fileBackedManager.createTask(task2);
 
-        fileBackedManager.readFromFile(fileBackedManager.getStorageFile().toString());
+        FileBackedTaskManager.loadFromFile(new File(fileBackedManager.getStorageFile().toString()));
         List<Task> taskList = fileBackedManager.getAllTasks();
         List<Epic> epicList = fileBackedManager.getAllEpic();
         List<Subtask> subtaskList = fileBackedManager.getAllSubtasks();
