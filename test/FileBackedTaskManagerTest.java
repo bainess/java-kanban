@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -7,6 +8,10 @@ import java.util.List;
 public class FileBackedTaskManagerTest {
     static FileBackedTaskManager fileBackedManager = new FileBackedTaskManager("storageFile.csv");
 
+    @BeforeEach
+    void beforeEach() {
+        fileBackedManager.removeAll();
+    }
 
     @Test
     void shouldAddTasksToFile(){
@@ -16,7 +21,7 @@ public class FileBackedTaskManagerTest {
         fileBackedManager.createEpic(new Epic("build", "build a house"));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
         length = (int) fileBackedManager.getStorageFile().length();
-        fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS, 3));
+        fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS, 1));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
     }
 
