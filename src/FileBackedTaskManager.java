@@ -1,11 +1,8 @@
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File storageFile;
-    private final Path path = Paths.get("storageFile.csv");
 
     FileBackedTaskManager(String filePath) {
         storageFile = new File(filePath);
@@ -94,7 +91,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void save()  {
-        try (FileWriter fw = new FileWriter(storageFile)) {
+        try (FileWriter fw = new FileWriter("storageFile.csv")) {
             fw.write("id, type, name, status, description, epic\n");
             List<String> tasksToSave = transferToSave();
             for (String task : tasksToSave) {
@@ -106,9 +103,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private List<String> transferToSave() {
-        List<Task>  tasksToSave = getAllTasks();
-        List<? extends Task> epicToSave = getAllEpic();
-        List<? extends Task> subtaskToSave = getAllSubtasks();
+        List<Task> tasksToSave = getAllTasks();
+        List<Epic> epicToSave = getAllEpic();
+        List<Subtask> subtaskToSave = getAllSubtasks();
         tasksToSave.addAll(epicToSave);
         tasksToSave.addAll(subtaskToSave);
         List<String> joinedList = new ArrayList<>();
@@ -151,18 +148,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
                     break;
                 default:
-                    throw new ClassCastException("Invalid class");
+                    throw new IllegalArgumentException("Invalid class");
             }
         }
 
-        static FileBackedTaskManager loadFromFile(File file) {
-            FileBackedTaskManager fileBackedManager = new FileBackedTaskManager("storageFile.csv");
-            fileBackedManager.readFromFile("storageFile.csv");
-            return fileBackedManager;
+        public static FileBackedTaskManager loadFromFile(File file) {
+            FileBackedTaskManager manager = new FileBackedTaskManager(file.toString());
+            manager.readFromFile(file);
+            return manager;
         }
 
-        public void readFromFile(String filename) {
-            try (FileReader fr = new FileReader(storageFile)) {
+        private void readFromFile(File file) {
+            try (FileReader fr = new FileReader(file)) {
                 BufferedReader br = new BufferedReader((fr));
                 int iteration = 0;
                 String line;
@@ -171,13 +168,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         iteration++;
                         continue;
                     }
-                    fromStringToTasksArray(line);
+                    fromStringToTasksArray( line);
                 }
+                setCounter();
             } catch (IOException e) {
                 throw new ManagerSaveException("Failed to read from file", e);
             }
-
         }
+    private void setCounter() {
+        int lastId = 0;
+        for (int key : taskList.keySet()) {
+            if (key > lastId) lastId = key;
+        }
+        for (int key : epicList.keySet()) {
+            if (key > lastId) lastId = key;
+        }
+        for (int key : subtaskList.keySet()) {
+            if (key > lastId) lastId = key;
+        }
+        count = lastId + 1;
+
+    }
 
     private Task restoreTaskFromString(int id, String title, String description, Status status) {
         return new Task(id, title, description, status);
