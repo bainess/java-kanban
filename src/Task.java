@@ -39,6 +39,13 @@ public class Task {
     public void setId(int id) {
         this.id = id;
     }
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public Duration getDuration() {
+       return duration;
+    }
 
     public void setTitle(String title) {
         this.title = title;

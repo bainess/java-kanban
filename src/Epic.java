@@ -1,16 +1,29 @@
+import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Epic extends Task {
    private List<Integer> subtaskIds = new ArrayList<>();
+    protected LocalDateTime endTime;
 
-    public Epic(String title, String description) {
-        super(title, description);
+    public Epic(String title, String description, LocalDateTime startTime, Duration duration) {
+        super(title, description, startTime, duration);
     }
 
-    public Epic(int id, String title, String description, Status status) {
-        super(title, description);
+
+    private LocalDateTime endTime(Map<Integer, Subtask> subtaskMap) {
+        List<Integer> subIds = getSubtaskIds();
+        LocalDateTime startTime = subtaskMap.get(subIds.getFirst()).getStartTime();
+        Duration epicDuration = subIds.stream().map(id -> {
+            return subtaskMap.get(id).getDuration();
+        }).reduce(Duration.ofDays(0), Duration::plus);
+        return startTime.plus(duration);
+    }
+
+    public Epic(int id, String title, String description, Status status, LocalDateTime startTime, Duration duration) {
+        super(title, description, startTime, duration);
         this.id = id;
         this.status = status;
     }
