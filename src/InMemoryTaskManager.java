@@ -1,7 +1,5 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class InMemoryTaskManager implements Manager {
@@ -194,5 +192,13 @@ public class InMemoryTaskManager implements Manager {
     public List<Task> showHistory() {
         return historyManager.getHistory();
     }
+
+    public TreeSet<Task> getPrioritizedTasks() {
+        TreeSet<Task> prioritisedTree = getAllTasks().stream().filter(task -> task.getStartTime() != null)
+                .collect(Collectors.toCollection(TreeSet::new));
+        getAllSubtasks().stream().filter(subtask -> subtask.getStartTime() != null)
+                .forEachOrdered(prioritisedTree::add);
+        return prioritisedTree;
     }
+}
 

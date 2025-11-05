@@ -1,7 +1,7 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class Task {
+public class Task implements Comparable<Task>{
 
     protected String title;
     protected String description;
@@ -94,6 +94,11 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration;
+        return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + "\n";
    }
+
+    @Override
+    public int compareTo(Task task) {
+        return this.startTime.compareTo(task.startTime);
+    }
 }
