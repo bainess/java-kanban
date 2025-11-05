@@ -1,21 +1,25 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 class InMemoryTaskManagerTest {
     static InMemoryTaskManager taskManager;
     @BeforeEach
     void beforeEach() {
         taskManager = new InMemoryTaskManager();
-        taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW));
-        taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS));
-        taskManager.createTask(new Task("wallpaper", "in the hallway", Status.DONE));
-        taskManager.createEpic(new Epic("sweep", "sweep the floor"));
-        taskManager.createEpic(new Epic("cook dinner", ""));
+        taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
+        taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
+        taskManager.createTask(new Task("wallpaper", "in the hallway", Status.DONE, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
+        taskManager.createEpic(new Epic("sweep", "sweep the floor", LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
+        taskManager.createEpic(new Epic("cook dinner", "", LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
 
-        taskManager.createSubtask(new Subtask("broom", "buy the broom", Status.NEW, 3));
-        taskManager.createSubtask(new Subtask("get the dustpan", "", Status.NEW, 3));
-        taskManager.createSubtask(new Subtask("buy veggies", "tomatoes, mushrooms", Status.DONE, 4));
-        taskManager.createSubtask(new Subtask("cut ingredients", "dice, slice", Status.DONE, 4));
+        taskManager.createSubtask(new Subtask("broom", "buy the broom", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30), 3));
+        taskManager.createSubtask(new Subtask("get the dustpan", "", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30), 3));
+        taskManager.createSubtask(new Subtask("buy veggies", "tomatoes, mushrooms", Status.DONE, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30),  4));
+        taskManager.createSubtask(new Subtask("cut ingredients", "dice, slice", Status.DONE, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30), 4));
     }
     @Test
     void shouldBeEqualTasksIfEqualId() {
@@ -40,14 +44,14 @@ class InMemoryTaskManagerTest {
     @Test
     void shouldAddAndReturnNewTask() {
         int size1 = taskManager.getAllTasks().size();
-        taskManager.createTask(new Task("split", "split the task", Status.NEW));
+        taskManager.createTask(new Task("split", "split the task", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
         int size2 = taskManager.getAllTasks().size();
         assertNotEquals(size1,size2);
     }
     @Test
     void shouldAddAndReturnNewEpic() {
         int size1 = taskManager.getAllEpic().size();
-        taskManager.createEpic(new Epic("create", "create Task Managet"));
+        taskManager.createEpic(new Epic("create", "create Task Managet", LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
         int size2 = taskManager.getAllEpic().size();
         assertNotEquals(size1,size2);
     }

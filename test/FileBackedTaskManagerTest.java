@@ -3,11 +3,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class FileBackedTaskManagerTest {
     static FileBackedTaskManager fileBackedManager = new FileBackedTaskManager("storageFile.csv");
-
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
     @BeforeEach
     void beforeEach() {
         fileBackedManager.removeAll();
@@ -15,26 +19,30 @@ public class FileBackedTaskManagerTest {
 
     @Test
     void shouldAddTasksToFile(){
-        fileBackedManager.createTask(new Task("read", "read a book", Status.NEW));
+
+        fileBackedManager.createTask(new Task("read", "read a book", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30)));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > 0);
         int length = (int) fileBackedManager.getStorageFile().length();
-        fileBackedManager.createEpic(new Epic("build", "build a house"));
+        fileBackedManager.createEpic(new Epic("build", "build a house", LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(40)));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
         length = (int) fileBackedManager.getStorageFile().length();
-        fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS, 1));
+        fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS,
+                LocalDateTime.of(2022, 11, 04, 14, 46), Duration.ofMinutes(45), 1));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
     }
 
 
     @Test
     void shouldReturnTasksFromString() {
-        Task task1  = new Task("kick" ,"kick a ball", Status.NEW);
+        Task task1  = new Task("kick" ,"kick a ball", Status.NEW,
+                LocalDateTime.of(2022, 11, 4, 14, 47), Duration.ofMinutes(15));
         fileBackedManager.createTask(task1);
-        Epic epic = new Epic("make", "make a cake");
+        Epic epic = new Epic("make", "make a cake", LocalDateTime.of(2022, 11, 4, 14, 48), Duration.ofMinutes(10));
         fileBackedManager.createEpic(epic);
-        Subtask subtask = new Subtask("buy", "buy eggs and flour", Status.IN_PROGRESS, epic.getId());
+        Subtask subtask = new Subtask("buy", "buy eggs and flour", Status.IN_PROGRESS,
+                LocalDateTime.of(2022, 11, 4, 14, 49), Duration.ofMinutes(30), epic.getId());
         fileBackedManager.createSubtask(subtask);
-        Task task2 = new Task("travel", "travel to Spain", Status.DONE);
+        Task task2 = new Task("travel", "travel to Spain", Status.DONE, LocalDateTime.of(2022, 11, 4, 14, 50), Duration.ofMinutes(30));
         fileBackedManager.createTask(task2);
 
         FileBackedTaskManager.loadFromFile(new File(fileBackedManager.getStorageFile().toString()));
