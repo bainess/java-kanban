@@ -7,8 +7,13 @@ public class Task {
     protected String description;
     protected int id;
     protected Status status;
-    protected Duration duration;
-    protected LocalDateTime startTime;
+    protected Duration duration = null;
+    protected LocalDateTime startTime = null;
+
+    public Task(String title, String description) {
+        this.title = title;
+        this.description = description;
+    }
 
    public Task(String title, String description, LocalDateTime startTime, Duration duration) {
         this.title = title;
@@ -25,12 +30,13 @@ public class Task {
         this.duration = duration;
     }
 
-    public Task(int id, String title, String description, Status status) {
+    public Task(int id, String title, String description, Status status, LocalDateTime startTime, Duration duration) {
         this.title = title;
         this.description = description;
         this.status = status;
         this.id = id;
     }
+
 
     public LocalDateTime getEndTime() {
        return startTime.plus(duration);
@@ -88,6 +94,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status;
+        return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration;
    }
 }

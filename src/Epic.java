@@ -8,24 +8,29 @@ public class Epic extends Task {
    private List<Integer> subtaskIds = new ArrayList<>();
     protected LocalDateTime endTime;
 
-    public Epic(String title, String description, LocalDateTime startTime, Duration duration) {
-        super(title, description, startTime, duration);
+
+    public Epic(String title, String description) {
+        super(title, description);
     }
 
-
-    private LocalDateTime endTime(Map<Integer, Subtask> subtaskMap) {
-        List<Integer> subIds = getSubtaskIds();
-        LocalDateTime startTime = subtaskMap.get(subIds.getFirst()).getStartTime();
-        Duration epicDuration = subIds.stream().map(id -> {
-            return subtaskMap.get(id).getDuration();
-        }).reduce(Duration.ofDays(0), Duration::plus);
-        return startTime.plus(duration);
+    public Epic(String title, String description, LocalDateTime startTime, Duration duration) {
+        super(title, description, startTime, duration);
     }
 
     public Epic(int id, String title, String description, Status status, LocalDateTime startTime, Duration duration) {
         super(title, description, startTime, duration);
         this.id = id;
         this.status = status;
+        endTime = getEndTime();
+    }
+
+    private LocalDateTime getEndTime(Map<Integer, Subtask> subtaskMap) {
+        List<Integer> subIds = getSubtaskIds();
+        LocalDateTime startTime = subtaskMap.get(subIds.getFirst()).getStartTime();
+        Duration epicDuration = subIds.stream().map(id -> {
+            return subtaskMap.get(id).getDuration();
+        }).reduce(Duration.ofDays(0), Duration::plus);
+        return startTime.plus(duration);
     }
 
     public void addSubtaskId(int id) {
@@ -71,6 +76,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + " subtasks: " + this.subtaskIds;
+        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + this.startTime + " " + this.duration + " subtasks: " + this.subtaskIds;
     }
 }
