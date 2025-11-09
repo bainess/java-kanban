@@ -135,7 +135,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
         private void fromStringToTasksArray(String taskInString) {
-            System.out.println(taskInString);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
             String[] splitString = taskInString.split(", ");
             Type type = Type.valueOf(splitString[1]);

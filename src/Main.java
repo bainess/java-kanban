@@ -24,17 +24,20 @@ public class Main {
         FileBackedTaskManager.loadFromFile(file).createTask(new Task("save", "save to file", Status.NEW, LocalDateTime.of(2025, 11, 5, 10, 00), Duration.ofMinutes(45) ));
         FileBackedTaskManager.loadFromFile(file).createTask(new Task("clean", "clean the table", Status.NEW));
       FileBackedTaskManager.loadFromFile(file).createTask(new Task("download", "download from file", Status.NEW, LocalDateTime.of(2025, 11, 5, 11, 00), Duration.ofMinutes(45) ));
-        FileBackedTaskManager.loadFromFile(file).createEpic(new Epic("nibble", "nibble ab apple"));
-        FileBackedTaskManager.loadFromFile(file).createSubtask(new Subtask("cut", "cut an apple into pieces", Status.IN_PROGRESS,LocalDateTime.of(2025, 11, 5, 12, 00), Duration.ofMinutes(45),  3));
+      Epic epic4 = new Epic("nibble", "nibble ab apple");
+      FileBackedTaskManager.loadFromFile(file).createEpic(epic4);
+        FileBackedTaskManager.loadFromFile(file).createSubtask(new Subtask("cut", "cut an apple into pieces", Status.IN_PROGRESS,LocalDateTime.of(2025, 11, 5, 12, 00), Duration.ofMinutes(45),  epic4.getId()));
+        FileBackedTaskManager.loadFromFile(file).createSubtask(new Subtask("put", "put on the plate", Status.IN_PROGRESS,LocalDateTime.of(2025, 11, 5, 13, 00), Duration.ofMinutes(45),  epic4.getId()));
        FileBackedTaskManager.loadFromFile(file).createTask(new Task("gnaw", "gnaw at the tree", Status.IN_PROGRESS));
+      // FileBackedTaskManager.loadFromFile(file).removeTaskById(0);
       //      Epic epic = FileBackedTaskManager.loadFromFile(file).getEpicById(3);
     //        epic.setDescription("DESCRIPTION");
      //       FileBackedTaskManager.loadFromFile(file).editEpic(epic);
      //       FileBackedTaskManager.loadFromFile(file).removeAll();
     //    System.out.println("created tasks:, %-20s");
-     //   System.out.println("All tasks: " + FileBackedTaskManager.loadFromFile(file).getAllTasks());
+     ///  System.out.println("All tasks: " + FileBackedTaskManager.loadFromFile(file).getAllTasks());
     //    System.out.println("All epics: " + FileBackedTaskManager.loadFromFile(file).getAllEpic());
-      //  System.out.println("All subtasks: " + FileBackedTaskManager.loadFromFile(file).getAllSubtasks());
+          System.out.println("All subtasks: " + FileBackedTaskManager.loadFromFile(file).getAllSubtasksByEpic(epic4.getId()));
 
 
 //        FileBackedTaskManager.loadFromFile(new File("storageFile.csv"));

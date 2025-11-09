@@ -60,13 +60,14 @@ public class Epic extends Task {
     }
 
     public void removeSubTaskId(int id) {
-        for (int i = 0; i < subtaskIds.size(); i++) {
-            int subId = subtaskIds.get(i);
-            if (subId == id) {
-                subtaskIds.remove(i);
-                return;
-            }
-        }
+        subtaskIds.stream().map(subtask -> subtaskIds.remove(id)).toList();
+//        for (int i = 0; i < subtaskIds.size(); i++) {
+//            int subId = subtaskIds.get(i);
+//            if (subId == id) {
+//                subtaskIds.remove(i);
+//                return;
+//            }
+     //   }
     }
 
     public void setEpicStatus(Map<Integer, Subtask> subtaskMap) {

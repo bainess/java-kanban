@@ -59,11 +59,9 @@ public class InMemoryTaskManager implements Manager {
     public void removeEpicById(int id) {
         if (epicList.containsKey(id)) {
             List<Integer> epicIds = epicList.get(id).getSubtaskIds();
-            for (int i = 0; i < epicIds.size(); i++) {
-                subtaskList.remove(i);
-            }
-            epicList.remove(id);
-            historyManager.remove(id);
+            subtaskList.entrySet().stream()
+                    .filter(entry -> epicIds.contains(entry.getKey()))
+                    .map(entry -> subtaskList.remove(id)).findFirst();
         }
     }
 
@@ -165,11 +163,10 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public List<Subtask> getAllSubtasksByEpic(int id) {
         Epic epic = epicList.get(id);
-        List<Subtask> subtasksOfEpic = new ArrayList<>();
-        for (Integer i : epic.getSubtaskIds()) {
-            subtasksOfEpic.add(subtaskList.get(i));
-        }
-        return subtasksOfEpic;
+        return epic.getSubtaskIds()
+                .stream()
+                .map(subtaskList::get)
+                .toList();
     }
 
     @Override
