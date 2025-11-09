@@ -116,6 +116,7 @@ public class InMemoryTaskManager implements Manager {
         taskList.clear();
         epicList.clear();
         subtaskList.clear();
+        count = 0;
     }
 
     @Override

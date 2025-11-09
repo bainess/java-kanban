@@ -71,13 +71,15 @@ public class Epic extends Task {
     }
 
     public void setEpicStatus(Map<Integer, Subtask> subtaskMap) {
-        List<Status> statusesList = subtaskMap.values().stream().filter(subtask -> this.subtaskIds.contains(subtask.getId())).map(Subtask::getStatus).toList();
-        if (statusesList.contains(Status.IN_PROGRESS)) this.status = Status.IN_PROGRESS;
+        List<Status> statusesList = subtaskMap.values().stream()
+                .filter(subtask -> this.subtaskIds.contains(subtask.getId())).map(Subtask::getStatus).toList();
+        this.status = Status.IN_PROGRESS;
         if (statusesList.stream().allMatch(status -> status.equals(Status.DONE))) {
             this.status = Status.DONE;
-        }  else  if (statusesList.stream().allMatch(status -> status.equals(Status.NEW))) {
+        }  else if (statusesList.stream().allMatch(status -> status.equals(Status.NEW))) {
             this.status = Status.NEW;
         }
+
     }
 
     @Override
