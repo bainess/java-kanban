@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,16 +15,21 @@ class InMemoryHistoryManagerTest {
     void beforeEach() {
         taskManager = new InMemoryTaskManager();
         taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(5)));
-        taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(10)));
-        taskManager.createTask(new Task("wallpaper", "in the hallway", Status.DONE, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(15)));
-        taskManager.createEpic(new Epic("sweep", "sweep the floor",LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(20)));
-        taskManager.createEpic(new Epic("cook dinner", "", LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(35)));
+        taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 15, 45), Duration.ofMinutes(10)));
+        taskManager.createTask(new Task("wallpaper", "in the hallway", Status.DONE, LocalDateTime.of(2022, 11, 4, 16, 45), Duration.ofMinutes(15)));
+        taskManager.createEpic(new Epic("sweep", "sweep the floor"));
+        taskManager.createEpic(new Epic("cook dinner", ""));
 
-        taskManager.createSubtask(new Subtask("broom", "buy the broom", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(40), 3));
-        taskManager.createSubtask(new Subtask("get the dustpan", "", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(45), 3));
-        taskManager.createSubtask(new Subtask("buy veggies", "tomatoes, mushrooms", Status.DONE, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(8), 4));
-        taskManager.createSubtask(new Subtask("cut ingredients", "dice, slice", Status.DONE, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(9), 4));
-        taskManager.createTask(new Task("tests", "complete tests for tm", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(18)));
+        taskManager.createSubtask(new Subtask("broom", "buy the broom", Status.NEW, LocalDateTime.of(2022, 11, 4, 17, 45), Duration.ofMinutes(40), 3));
+        taskManager.createSubtask(new Subtask("get the dustpan", "", Status.NEW, LocalDateTime.of(2022, 11, 4, 18, 45), Duration.ofMinutes(45), 3));
+        taskManager.createSubtask(new Subtask("buy veggies", "tomatoes, mushrooms", Status.DONE, LocalDateTime.of(2022, 11, 4, 19, 45), Duration.ofMinutes(8), 4));
+        taskManager.createSubtask(new Subtask("cut ingredients", "dice, slice", Status.DONE, LocalDateTime.of(2022, 11, 4, 20, 45), Duration.ofMinutes(9), 4));
+        taskManager.createTask(new Task("tests", "complete tests for tm", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 21, 45), Duration.ofMinutes(18)));
+    }
+
+    @Test
+    void shouldReturnZeroWhenTasksNotGet() {
+        Assertions.assertEquals(0, taskManager.showHistory().size());
     }
 
     @Test
@@ -41,13 +47,19 @@ class InMemoryHistoryManagerTest {
         taskManager.getTaskById(0);
         assertEquals(2, taskManager.showHistory().size());
     }
+
     @Test
     void shouldRemoveTaskTaskFromBeginningOfList() {
-        taskManager.getTaskById(0);
-        taskManager.getTaskById(1);
-        taskManager.getTaskById(0);
+        taskManager.removeAllTasks();
+        Task task1 = new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(5));
+        Task task2 = new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 15, 45), Duration.ofMinutes(10));
+        taskManager.createTask(task1);
+        taskManager.createTask(task2);
+        taskManager.getTaskById(task1.getId());
+        taskManager.getTaskById(task2.getId());
+        taskManager.getTaskById(task1.getId());
         System.out.println(taskManager.showHistory().getFirst().getId());
-        assertEquals(1, taskManager.showHistory().getFirst().getId());
+        assertEquals(task2.getId(), taskManager.showHistory().getFirst().getId());
     }
     @Test
     void shouldRemoveTaskFromMiddleToEndWhenRepeated() {
