@@ -1,6 +1,7 @@
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Epic extends Task {
    private final List<Integer> subtaskIds = new ArrayList<>();
@@ -11,40 +12,41 @@ public class Epic extends Task {
         super(title, description);
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        if (this.startTime == null || startTime == null || startTime.isBefore(this.startTime)) this.startTime = startTime;
+    public void setStartTime(Map<Integer, Subtask> subtaskMap) {
+       this.startTime = getStartTime(subtaskMap);
     }
 
-    public void setDuration(Duration duration) {
-        LocalDateTime endTime = getEndTime().orElse(null);
-        LocalDateTime startTime = null;
-        if (this.startTime != null) startTime = this.startTime;
+    public void setDuration(Map<Integer, Subtask> subtaskMap) {
+        LocalDateTime endTime = getEndTime(subtaskMap);
+        LocalDateTime startTime = getStartTime(subtaskMap);
         if (startTime != null && endTime != null) this.duration = Duration.between(startTime, endTime);
 
     }
 
     public LocalDateTime getStartTime(Map<Integer, Subtask> subtaskMap) {
-        List<Subtask> subtasks = subtaskIds.stream().map(subtaskMap::get).toList();
-        Optional<Subtask> task = subtasks.stream().min(Comparator.comparing(Subtask::getStartTime));
-        return task.map(Task::getStartTime).orElse(null);
+        Optional<LocalDateTime> time = subtaskMap.entrySet().stream().
+                filter(entry -> subtaskIds.contains(entry.getKey()))
+                .filter(subtask -> subtask.getValue() != null)
+                .map(entry -> entry.getValue())
+                .map(Subtask::getStartTime)
+                .sorted()
+                .findFirst();
+        return time.orElseGet(() -> null);
     }
 
     public Epic(int id, String title, String description, Status status, LocalDateTime startTime, Duration duration) {
         super(title, description, startTime, duration);
         this.id = id;
         this.status = status;
-        if (getEndTime().isPresent()) {
-            endTime = getEndTime().get();
-        } else {
-            endTime = null;
-        }
     }
 
     private LocalDateTime getEndTime(Map<Integer, Subtask> subtaskMap) {
-        List<Integer> subIds = getSubtaskIds();
-        LocalDateTime startTime = subtaskMap.get(subIds.getFirst()).getStartTime();
-        Duration epicDuration = subIds.stream().map(id -> subtaskMap.get(id).getDuration())
-                .reduce(Duration.ofDays(0), Duration::plus);
+        LocalDateTime startTime = null;
+        Duration epicDuration = null;
+        startTime = getStartTime(subtaskMap);
+        if (startTime == null) return null;
+        epicDuration = subtaskIds.stream().map(id -> subtaskMap.get(id).getDuration())
+                    .reduce(Duration.ofDays(0), Duration::plus);
         return startTime.plus(epicDuration);
     }
 
@@ -67,8 +69,6 @@ public class Epic extends Task {
     }
 
     public void setEpicStatus(Map<Integer, Subtask> subtaskMap) {
-        //AtomicInteger statusNew = new AtomicInteger();
-       // AtomicInteger statusDone = new AtomicInteger();
         List<Status> statusesList = subtaskMap.values().stream().filter(subtask ->this.subtaskIds.contains(subtask.getId())).map(Subtask::getStatus).toList();
         if (statusesList.contains(Status.IN_PROGRESS)) this.status = Status.IN_PROGRESS;
         if (statusesList.stream().allMatch(status -> status.equals(Status.DONE))) {
