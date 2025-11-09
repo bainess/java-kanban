@@ -1,11 +1,10 @@
 import java.time.LocalDateTime;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Epic extends Task {
-   private List<Integer> subtaskIds = new ArrayList<>();
+   private final List<Integer> subtaskIds = new ArrayList<>();
     protected LocalDateTime endTime;
 
 
@@ -13,15 +12,33 @@ public class Epic extends Task {
         super(title, description);
     }
 
-    public Epic(String title, String description, LocalDateTime startTime, Duration duration) {
-        super(title, description, startTime, duration);
+    public void setStartTime(LocalDateTime startTime) {
+        if (this.startTime == null || startTime == null || startTime.isBefore(this.startTime)) this.startTime = startTime;
+    }
+
+    public void setDuration(Duration duration) {
+        LocalDateTime endTime = getEndTime().orElse(null);
+        LocalDateTime startTime = null;
+        if (this.startTime != null) startTime = this.startTime;
+        if (startTime != null && endTime != null) this.duration = Duration.between(startTime, endTime);
+
+    }
+
+    public LocalDateTime getStartTime(Map<Integer, Subtask> subtaskMap) {
+        List<Subtask> subtasks = subtaskIds.stream().map(subtaskMap::get).toList();
+        Optional<Subtask> task = subtasks.stream().min(Comparator.comparing(Subtask::getStartTime));
+        return task.map(Task::getStartTime).orElse(null);
     }
 
     public Epic(int id, String title, String description, Status status, LocalDateTime startTime, Duration duration) {
         super(title, description, startTime, duration);
         this.id = id;
         this.status = status;
-        endTime = getEndTime();
+        if (getEndTime().isPresent()) {
+            endTime = getEndTime().get();
+        } else {
+            endTime = null;
+        }
     }
 
     private LocalDateTime getEndTime(Map<Integer, Subtask> subtaskMap) {
@@ -30,7 +47,7 @@ public class Epic extends Task {
         Duration epicDuration = subIds.stream().map(id -> {
             return subtaskMap.get(id).getDuration();
         }).reduce(Duration.ofDays(0), Duration::plus);
-        return startTime.plus(duration);
+        return startTime.plus(epicDuration);
     }
 
     public void addSubtaskId(int id) {

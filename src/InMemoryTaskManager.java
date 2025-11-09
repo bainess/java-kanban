@@ -1,3 +1,4 @@
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -7,15 +8,18 @@ public class InMemoryTaskManager implements Manager {
     protected final Map<Integer, Epic> epicList = new HashMap<>();
     protected final Map<Integer, Subtask> subtaskList = new HashMap<>();
     private final HistoryManager historyManager = new InMemoryHistoryManager();
-
     protected int count = 0;
 
 
     @Override
     public void createTask(Task task) {
-           int id = count++;
-           task.setId(id);
-           taskList.put(id, task);
+        if (canScheduleAtTime(task)) {
+            canScheduleAtTime(task);
+            int id = count++;
+            task.setId(id);
+            taskList.put(id, task);
+        }
+
     }
 
     @Override
@@ -24,17 +28,24 @@ public class InMemoryTaskManager implements Manager {
         epic.setId(id);
         epicList.put(id, epic);
         epic.setEpicStatus(subtaskList);
+        epic. setStartTime(epic.getStartTime());
+        if (epic.getEndTime().isPresent()) epic.endTime = epic.getEndTime().get();
     }
 
     @Override
     public void createSubtask(Subtask subtask) {
-        int id = count++;
-        subtask.setId(id);
-        subtaskList.put(id, subtask);
-        int epicId = subtask.getEpicId();
-        Epic epic = epicList.get(epicId);
-        epic.addSubtaskId(id);
-        epic.setEpicStatus(subtaskList);
+        if (canScheduleAtTime(subtask)) {
+            int id = count++;
+            subtask.setId(id);
+            subtaskList.put(id, subtask);
+            int epicId = subtask.getEpicId();
+            Epic epic = epicList.get(epicId);
+            epic.addSubtaskId(id);
+            epic.setEpicStatus(subtaskList);
+            epic.setStartTime(subtask.getStartTime());
+            epic.setDuration(subtask.getDuration());
+        }
+
     }
 
     @Override
@@ -194,11 +205,29 @@ public class InMemoryTaskManager implements Manager {
     }
 
     public TreeSet<Task> getPrioritizedTasks() {
-        TreeSet<Task> prioritisedTree = getAllTasks().stream().filter(task -> task.getStartTime() != null)
+        TreeSet<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+                tasksPrioritized = getAllTasks().stream().filter(task -> task.getStartTime() != null)
                 .collect(Collectors.toCollection(TreeSet::new));
         getAllSubtasks().stream().filter(subtask -> subtask.getStartTime() != null)
-                .forEachOrdered(prioritisedTree::add);
-        return prioritisedTree;
+                .forEachOrdered(tasksPrioritized::add);
+        return tasksPrioritized;
     }
+
+    protected boolean canScheduleAtTime(Task task) {
+        if (task.getStartTime() == null) return true;
+        TreeSet<Task> taskTree = getPrioritizedTasks();
+        if (taskTree.isEmpty()) return true;
+        LocalDateTime taskStart = task.getStartTime();
+        LocalDateTime taskEnd = task.getStartTime().plus(task.getDuration());
+        Boolean b = taskTree.stream().map(taskFromList -> {
+           if (taskStart.isAfter(taskFromList.getStartTime().plus(taskFromList.getDuration()))
+                   || taskEnd.isBefore(taskFromList.getStartTime())) {
+               return false;
+           } else {
+               return true;
+           }
+        }).filter(Boolean::booleanValue).findFirst().orElseGet(() -> false);
+        return (b) ? false : true;
+        }
 }
 

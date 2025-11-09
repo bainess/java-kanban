@@ -23,7 +23,7 @@ public class FileBackedTaskManagerTest {
         fileBackedManager.createTask(new Task("read", "read a book", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30)));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > 0);
         int length = (int) fileBackedManager.getStorageFile().length();
-        fileBackedManager.createEpic(new Epic("build", "build a house", LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(40)));
+        fileBackedManager.createEpic(new Epic("build", "build a house");
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
         length = (int) fileBackedManager.getStorageFile().length();
         fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS,
@@ -37,7 +37,7 @@ public class FileBackedTaskManagerTest {
         Task task1  = new Task("kick" ,"kick a ball", Status.NEW,
                 LocalDateTime.of(2022, 11, 4, 14, 47), Duration.ofMinutes(15));
         fileBackedManager.createTask(task1);
-        Epic epic = new Epic("make", "make a cake", LocalDateTime.of(2022, 11, 4, 14, 48), Duration.ofMinutes(10));
+        Epic epic = new Epic("make", "make a cake");
         fileBackedManager.createEpic(epic);
         Subtask subtask = new Subtask("buy", "buy eggs and flour", Status.IN_PROGRESS,
                 LocalDateTime.of(2022, 11, 4, 14, 49), Duration.ofMinutes(30), epic.getId());
