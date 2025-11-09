@@ -27,8 +27,8 @@ public class InMemoryTaskManager implements Manager {
         epic.setId(id);
         epicList.put(id, epic);
         epic.setEpicStatus(subtaskList);
-        epic. setStartTime(epic.getStartTime());
-        if (epic.getEndTime().isPresent()) epic.endTime = epic.getEndTime().get();
+        epic.setStartTime(subtaskList);
+        epic.setDuration(subtaskList);
     }
 
     @Override
@@ -41,8 +41,8 @@ public class InMemoryTaskManager implements Manager {
             Epic epic = epicList.get(epicId);
             epic.addSubtaskId(id);
             epic.setEpicStatus(subtaskList);
-            epic.setStartTime(subtask.getStartTime());
-            epic.setDuration(subtask.getDuration());
+            epic.setStartTime(subtaskList);
+            epic.setDuration(subtaskList);
         }
 
     }
@@ -149,27 +149,17 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public List<Task> getAllTasks() {
-        List<Task> taskArray = new ArrayList<>();
-        for (Task task : taskList.values()) taskArray.add(task);
-        return taskArray;
+        return new ArrayList<>(taskList.values());
     }
 
     @Override
     public List<Epic> getAllEpic() {
-        List<Epic> epicArray = new ArrayList<>();
-        for (Epic epic : epicList.values()) {
-            epicArray.add(epic);
-        }
-        return epicArray;
+        return new ArrayList<>(epicList.values());
     }
 
     @Override
     public List<Subtask> getAllSubtasks() {
-        List<Subtask> subtaskArray = new ArrayList<>();
-        for (Subtask subtask : subtaskList.values()) {
-            subtaskArray.add(subtask);
-        }
-        return subtaskArray;
+        return new ArrayList<>(subtaskList.values());
     }
 
     @Override
@@ -204,8 +194,7 @@ public class InMemoryTaskManager implements Manager {
     }
 
     public TreeSet<Task> getPrioritizedTasks() {
-        TreeSet<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
-                tasksPrioritized = getAllTasks().stream().filter(task -> task.getStartTime() != null)
+        TreeSet<Task> tasksPrioritized = getAllTasks().stream().filter(task -> task.getStartTime() != null)
                 .collect(Collectors.toCollection(TreeSet::new));
         getAllSubtasks().stream().filter(subtask -> subtask.getStartTime() != null)
                 .forEachOrdered(tasksPrioritized::add);

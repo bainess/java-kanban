@@ -1,6 +1,5 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 public class Task implements Comparable<Task> {
 
@@ -53,13 +52,6 @@ public class Task implements Comparable<Task> {
         this.duration = duration;
     }
 
-    public Optional<LocalDateTime> getEndTime() {
-        if (this.startTime != null && this.duration != null) {
-            return Optional.of(this.startTime.plus(this.duration));
-        } else {
-            return Optional.ofNullable(this.startTime);
-        }
-    }
 
     public void setId(int id) {
         this.id = id;
