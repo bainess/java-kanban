@@ -141,12 +141,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             System.out.println(taskInString);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
             String[] splitString = taskInString.split(", ");
-          //  System.out.println(splitString[5]);
             Type type = Type.valueOf(splitString[1]);
             LocalDateTime startTime = null;
             if (!splitString[5].isBlank()) startTime = LocalDateTime.parse(splitString[5]);
-       //     System.out.println(LocalDateTime.parse(splitString[5]));
-
             Duration duration = null;
             if (Long.parseLong(splitString[6]) != 0) duration = Duration.ofMinutes(Long.parseLong(splitString[6]));
             switch (type) {
