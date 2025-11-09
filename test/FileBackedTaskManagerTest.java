@@ -11,7 +11,6 @@ import java.util.List;
 
 public class FileBackedTaskManagerTest {
     static FileBackedTaskManager fileBackedManager = new FileBackedTaskManager("storageFile.csv");
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
     @BeforeEach
     void beforeEach() {
         fileBackedManager.removeAll();
@@ -23,7 +22,7 @@ public class FileBackedTaskManagerTest {
         fileBackedManager.createTask(new Task("read", "read a book", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30)));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > 0);
         int length = (int) fileBackedManager.getStorageFile().length();
-        fileBackedManager.createEpic(new Epic("build", "build a house");
+        fileBackedManager.createEpic(new Epic("build", "build a house"));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
         length = (int) fileBackedManager.getStorageFile().length();
         fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS,

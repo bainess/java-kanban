@@ -1,7 +1,10 @@
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.time.format.SignStyle;
 import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
@@ -112,12 +115,12 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         tasksToSave.addAll(epicToSave);
         tasksToSave.addAll(subtaskToSave);
         List<String> joinedList = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
+       //    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
         for (Task task : tasksToSave) {
             String time = " ";
             long duration = 0;
-            if (task.getStartTime() != null) time = task.getStartTime().format(formatter);
+            if (task.getStartTime() != null) time = task.getStartTime().toString();
             if (task.getDuration() != null) duration = task.getDuration().toMinutes();
             String type = task.getClass().toString().toUpperCase().substring(6);
             StringBuilder str = new StringBuilder().append(task.getId()).append(", ").append(type).append(", ")
@@ -135,13 +138,17 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
         private void fromStringToTasksArray(String taskInString) {
+            System.out.println(taskInString);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
             String[] splitString = taskInString.split(", ");
+          //  System.out.println(splitString[5]);
             Type type = Type.valueOf(splitString[1]);
             LocalDateTime startTime = null;
-            if (!splitString[5].isBlank()) startTime = LocalDateTime.parse(splitString[5], formatter);
+            if (!splitString[5].isBlank()) startTime = LocalDateTime.parse(splitString[5]);
+       //     System.out.println(LocalDateTime.parse(splitString[5]));
+
             Duration duration = null;
-            if (Long.parseLong(splitString[6]) == 0) duration = Duration.ofMinutes(Long.parseLong(splitString[6]));
+            if (Long.parseLong(splitString[6]) != 0) duration = Duration.ofMinutes(Long.parseLong(splitString[6]));
             switch (type) {
                 case TASK:
                     Task task = restoreTaskFromString(Integer.parseInt(splitString[0]), splitString[2], splitString[4],
@@ -155,13 +162,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                             Status.valueOf(splitString[3]),
                             startTime,
                             duration);
-                   epicList.put(Integer.parseInt(splitString[0]), epic);
-                   break;
+                    epicList.put(Integer.parseInt(splitString[0]), epic);
+                    break;
                 case SUBTASK:
                     Subtask subtask = restoreSubtaskFromString(Integer.parseInt(splitString[0]), splitString[2],
                             splitString[4], Status.valueOf(splitString[3]),
-                           startTime,
-                           duration,
+                            startTime,
+                            duration,
                             Integer.parseInt(splitString[7]));
                     subtaskList.put(Integer.parseInt(splitString[0]), subtask);
                     getEpicById(Integer.parseInt(splitString[7])).addSubtaskId(Integer.parseInt(splitString[0]));
@@ -173,7 +180,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         public static FileBackedTaskManager loadFromFile(File file) {
             FileBackedTaskManager manager = new FileBackedTaskManager(file.toString());
-            manager.readFromFile(file);
+            if (file.length() > 0) manager.readFromFile(file);
             return manager;
         }
 

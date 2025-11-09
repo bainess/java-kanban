@@ -1,7 +1,6 @@
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Epic extends Task {
    private final List<Integer> subtaskIds = new ArrayList<>();
@@ -44,9 +43,8 @@ public class Epic extends Task {
     private LocalDateTime getEndTime(Map<Integer, Subtask> subtaskMap) {
         List<Integer> subIds = getSubtaskIds();
         LocalDateTime startTime = subtaskMap.get(subIds.getFirst()).getStartTime();
-        Duration epicDuration = subIds.stream().map(id -> {
-            return subtaskMap.get(id).getDuration();
-        }).reduce(Duration.ofDays(0), Duration::plus);
+        Duration epicDuration = subIds.stream().map(id -> subtaskMap.get(id).getDuration())
+                .reduce(Duration.ofDays(0), Duration::plus);
         return startTime.plus(epicDuration);
     }
 
@@ -69,30 +67,19 @@ public class Epic extends Task {
     }
 
     public void setEpicStatus(Map<Integer, Subtask> subtaskMap) {
-        int statusNew = 0;
-        int statusDone = 0;
-        for (Subtask subtask : subtaskMap.values()) {
-            if (this.subtaskIds.contains(subtask.getId())) {
-                if (subtask.getStatus().equals(Status.NEW)) {
-                    statusNew++;
-                } else if (subtask.getStatus().equals(Status.DONE)) {
-                    statusDone++;
-                }
-            }
-
-        }
-
-        if (this.subtaskIds.size() == statusNew) {
-            this.status = Status.NEW;
-        } else if (this.subtaskIds.size() == statusDone) {
+        //AtomicInteger statusNew = new AtomicInteger();
+       // AtomicInteger statusDone = new AtomicInteger();
+        List<Status> statusesList = subtaskMap.values().stream().filter(subtask ->this.subtaskIds.contains(subtask.getId())).map(Subtask::getStatus).toList();
+        if (statusesList.contains(Status.IN_PROGRESS)) this.status = Status.IN_PROGRESS;
+        if (statusesList.stream().allMatch(status -> status.equals(Status.DONE))) {
             this.status = Status.DONE;
-        } else {
-            this.status = Status.IN_PROGRESS;
+        }  else  if (statusesList.stream().allMatch(status -> status.equals(Status.NEW))) {
+            this.status = Status.NEW;
         }
     }
 
     @Override
     public String toString() {
-        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + this.startTime + " " + this.duration + " subtasks: " + this.subtaskIds;
+        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + " subtasks: " + this.subtaskIds;
     }
 }

@@ -19,7 +19,6 @@ public class InMemoryTaskManager implements Manager {
             task.setId(id);
             taskList.put(id, task);
         }
-
     }
 
     @Override
