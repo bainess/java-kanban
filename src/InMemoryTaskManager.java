@@ -9,7 +9,7 @@ public class InMemoryTaskManager implements Manager {
     protected final Map<Integer, Subtask> subtaskList = new HashMap<>();
     private final HistoryManager historyManager = new InMemoryHistoryManager();
     protected int count = 0;
-
+    protected TreeSet<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     @Override
     public void createTask(Task task) {
@@ -18,6 +18,7 @@ public class InMemoryTaskManager implements Manager {
             int id = count++;
             task.setId(id);
             taskList.put(id, task);
+            addToPrioritizedTasks(task);
         }
     }
 
@@ -43,6 +44,7 @@ public class InMemoryTaskManager implements Manager {
             epic.setEpicStatus(subtaskList);
             epic.setStartTime(subtaskList);
             epic.setDuration(subtaskList);
+            addToPrioritizedTasks(subtask);
         }
 
     }
@@ -50,14 +52,17 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeTaskById(int id) {
         if (taskList.containsKey(id)) {
+            tasksPrioritized.remove(taskList.get(id));
             taskList.remove(id);
             historyManager.remove(id);
+
         }
     }
 
     @Override
     public void removeEpicById(int id) {
         if (epicList.containsKey(id)) {
+            tasksPrioritized.remove(epicList.get(id));
             List<Integer> epicIds = epicList.get(id).getSubtaskIds();
             subtaskList.entrySet().stream()
                     .filter(entry -> epicIds.contains(entry.getKey()))
@@ -68,13 +73,13 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeSubtaskById(int id) {
         if (subtaskList.containsKey(id)) {
+            tasksPrioritized.remove(subtaskList.get(id));
             historyManager.remove(id);
             Subtask subToRemove = subtaskList.get(id);
             int epicId = subToRemove.getEpicId();
             Epic epic = epicList.get(epicId);
             epic.removeSubTaskId(id);
             subtaskList.remove(id);
-
         }
     }
 
@@ -113,6 +118,7 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public void removeAll() {
+        tasksPrioritized.clear();
         taskList.clear();
         epicList.clear();
         subtaskList.clear();
@@ -172,17 +178,20 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public void removeAllTasks() {
+        tasksPrioritized.removeAll(taskList.values());
         taskList.clear();
     }
 
     @Override
     public void removeAllEpics() {
+        tasksPrioritized.removeAll(epicList.values());
         epicList.clear();
         subtaskList.clear();
     }
 
     @Override
     public void removeAllSubtasks() {
+        tasksPrioritized.removeAll(subtaskList.values());
         subtaskList.clear();
     }
 
@@ -191,29 +200,34 @@ public class InMemoryTaskManager implements Manager {
         return historyManager.getHistory();
     }
 
+    public void addToPrioritizedTasks(Task task) {
+        tasksPrioritized.add(task);
+    }
+
+    public void addToPrioritizedTasks(Subtask task) {
+        tasksPrioritized.add(task);
+    }
+
+
     public TreeSet<Task> getPrioritizedTasks() {
-        TreeSet<Task> tasksPrioritized = getAllTasks().stream().filter(task -> task.getStartTime() != null)
-                .collect(Collectors.toCollection(TreeSet::new));
-        getAllSubtasks().stream().filter(subtask -> subtask.getStartTime() != null)
-                .forEachOrdered(tasksPrioritized::add);
         return tasksPrioritized;
     }
 
-    protected boolean canScheduleAtTime(Task task) {
-        if (task.getStartTime() == null) return true;
-        TreeSet<Task> taskTree = getPrioritizedTasks();
-        if (taskTree.isEmpty()) return true;
-        LocalDateTime taskStart = task.getStartTime();
-        LocalDateTime taskEnd = task.getStartTime().plus(task.getDuration());
-        Boolean b = taskTree.stream().map(taskFromList -> {
-           if (taskStart.isAfter(taskFromList.getStartTime().plus(taskFromList.getDuration()))
-                   || taskEnd.isBefore(taskFromList.getStartTime())) {
-               return false;
-           } else {
-               return true;
-           }
-        }).filter(Boolean::booleanValue).findFirst().orElseGet(() -> false);
-        return (b) ? false : true;
+    protected boolean canScheduleAtTime(Task newTask) {
+        if (newTask.getStartTime() == null) return true;
+        if (tasksPrioritized.isEmpty()) return true;
+        LocalDateTime taskStart = newTask.getStartTime();
+        LocalDateTime taskEnd = newTask.getStartTime().plus(newTask.getDuration());
+        boolean a = false;
+        for (Task task : tasksPrioritized) {
+            if (taskStart.isAfter(task.getStartTime().plus(task.getDuration()))
+                    || taskEnd.isBefore(task.getStartTime())) {
+                a =  true;
+            } else {
+                a = false;
+            }
         }
+        return a;
+    }
 }
 

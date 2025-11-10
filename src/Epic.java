@@ -19,7 +19,6 @@ public class Epic extends Task {
         LocalDateTime endTime = getEndTime(subtaskMap);
         LocalDateTime startTime = getStartTime(subtaskMap);
         if (startTime != null && endTime != null) this.duration = Duration.between(startTime, endTime);
-
     }
 
     public LocalDateTime getStartTime(Map<Integer, Subtask> subtaskMap) {
@@ -30,8 +29,7 @@ public class Epic extends Task {
                 .filter(subtask -> subtask.getValue() != null)
                 .map(entry -> entry.getValue())
                 .map(Subtask::getStartTime)
-                .sorted()
-                .findFirst();
+                .min(LocalDateTime::compareTo);
         return time.orElseGet(() -> null);
     }
 
@@ -42,11 +40,9 @@ public class Epic extends Task {
     }
 
     private LocalDateTime getEndTime(Map<Integer, Subtask> subtaskMap) {
-        LocalDateTime startTime = null;
-        Duration epicDuration = null;
-        startTime = getStartTime(subtaskMap);
+        LocalDateTime startTime= getStartTime(subtaskMap);
         if (startTime == null) return null;
-        epicDuration = subtaskIds.stream().map(id -> subtaskMap.get(id).getDuration())
+        Duration epicDuration = subtaskIds.stream().map(id -> subtaskMap.get(id).getDuration())
                     .reduce(Duration.ofDays(0), Duration::plus);
         return startTime.plus(epicDuration);
     }
@@ -61,13 +57,6 @@ public class Epic extends Task {
 
     public void removeSubTaskId(int id) {
         subtaskIds.stream().map(subtask -> subtaskIds.remove(id)).toList();
-//        for (int i = 0; i < subtaskIds.size(); i++) {
-//            int subId = subtaskIds.get(i);
-//            if (subId == id) {
-//                subtaskIds.remove(i);
-//                return;
-//            }
-     //   }
     }
 
     public void setEpicStatus(Map<Integer, Subtask> subtaskMap) {
