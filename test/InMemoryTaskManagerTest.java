@@ -93,7 +93,7 @@ class InMemoryTaskManagerTest {
             taskManager.createEpic(epic);
             Subtask subtask1 = new Subtask("read biology", "write biology", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30), epic.getId());
             Subtask subtask2 = new Subtask("read math", "write math", Status.DONE, LocalDateTime.of(2022, 11, 4, 15, 45), Duration.ofMinutes(30), epic.getId());
-            Subtask subtask3 = new Subtask("read science", "write science", Status.DONE, LocalDateTime.of(2022, 11, 4, 15, 45), Duration.ofMinutes(30), epic.getId());
+            Subtask subtask3 = new Subtask("read science", "write science", Status.DONE, LocalDateTime.of(2022, 11, 4, 16, 45), Duration.ofMinutes(30), epic.getId());
             taskManager.createSubtask(subtask1);
             taskManager.createSubtask(subtask2);
             taskManager.createSubtask(subtask3);

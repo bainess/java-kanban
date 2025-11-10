@@ -6,6 +6,7 @@ import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File storageFile;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
     FileBackedTaskManager(String filePath) {
         storageFile = new File(filePath);
@@ -135,7 +136,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
         private void fromStringToTasksArray(String taskInString) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
             String[] splitString = taskInString.split(", ");
             Type type = Type.valueOf(splitString[1]);
             LocalDateTime startTime = null;
