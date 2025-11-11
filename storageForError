@@ -1,0 +1,8 @@
+id, type, name, status, description, start time, duration epic
+1, TASK, save, NEW, save to file, 2025-11-05T10:00, 45
+2, TASK, clean, NEW, clean the table,  , 0
+3, TASK, download, NEW, download from file, 2025-11-05T11:00, 45
+7, TASK, gnaw, IN_PROGRESS, gnaw at the tree,  , 0
+4, EPIC, nibble, IN_PROGRESS, nibble ab apple, 2025-11-05T12:00, 90
+5, SUBTASK, cut, IN_PROGRESS, cut an apple into pieces, 2025-11-05T12:00, 45, 4
+6, SUSASK, put, IN_PROGRESS, put on the plate, 2025-11-05T13:00, 45, 4

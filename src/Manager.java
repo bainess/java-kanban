@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Set;
 
 public interface Manager {
     void createTask(Task task);
@@ -41,5 +42,9 @@ public interface Manager {
 
     void removeAllSubtasks();
 
-   List<Task> showHistory();
+    List<Task> showHistory();
+
+    Set<Task> getPrioritizedTasks();
+
+
 }
