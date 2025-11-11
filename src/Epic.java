@@ -29,7 +29,7 @@ public class Epic extends Task {
                 .filter(subtask -> subtask.getValue() != null)
                 .map(entry -> entry.getValue().getStartTime())
                 .min(LocalDateTime::compareTo);
-        return time.orElseGet(() -> null);
+        return time.orElse(null);
     }
 
     public Epic(int id, String title, String description, Status status, LocalDateTime startTime, Duration duration) {
