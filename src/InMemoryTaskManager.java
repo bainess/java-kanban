@@ -8,12 +8,11 @@ public class InMemoryTaskManager implements Manager {
     protected final Map<Integer, Subtask> subtaskList = new HashMap<>();
     private final HistoryManager historyManager = new InMemoryHistoryManager();
     protected int count = 0;
-    protected TreeSet<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    protected Set<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     @Override
     public void createTask(Task task) {
         if (canScheduleAtTime(task)) {
-            canScheduleAtTime(task);
             int id = count++;
             task.setId(id);
             taskList.put(id, task);
@@ -199,17 +198,12 @@ public class InMemoryTaskManager implements Manager {
         return historyManager.getHistory();
     }
 
-    public void addToPrioritizedTasks(Task task) {
+    private void addToPrioritizedTasks(Task task) {
         tasksPrioritized.add(task);
     }
-
-    public void addToPrioritizedTasks(Subtask task) {
-        tasksPrioritized.add(task);
-    }
-
 
     public TreeSet<Task> getPrioritizedTasks() {
-        return tasksPrioritized;
+        return new TreeSet<Task>(tasksPrioritized);
     }
 
     protected boolean canScheduleAtTime(Task newTask) {
@@ -217,16 +211,16 @@ public class InMemoryTaskManager implements Manager {
         if (tasksPrioritized.isEmpty()) return true;
         LocalDateTime taskStart = newTask.getStartTime();
         LocalDateTime taskEnd = newTask.getStartTime().plus(newTask.getDuration());
-        boolean a = false;
+        boolean canSchedule = false;
         for (Task task : tasksPrioritized) {
             if (taskStart.isAfter(task.getStartTime().plus(task.getDuration()))
                     || taskEnd.isBefore(task.getStartTime())) {
-                a =  true;
+                canSchedule =  true;
             } else {
-                a = false;
+               return canSchedule = false;
             }
         }
-        return a;
+        return canSchedule;
     }
 }
 

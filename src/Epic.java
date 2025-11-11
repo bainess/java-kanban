@@ -27,8 +27,7 @@ public class Epic extends Task {
                 .stream()
                 .filter(entry -> subtaskIds.contains(entry.getKey()))
                 .filter(subtask -> subtask.getValue() != null)
-                .map(entry -> entry.getValue())
-                .map(Subtask::getStartTime)
+                .map(entry -> entry.getValue().getStartTime())
                 .min(LocalDateTime::compareTo);
         return time.orElseGet(() -> null);
     }
