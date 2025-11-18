@@ -1,8 +1,12 @@
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File storageFile;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
     FileBackedTaskManager(String filePath) {
         storageFile = new File(filePath);
@@ -91,8 +95,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void save()  {
-        try (FileWriter fw = new FileWriter("storageFile.csv")) {
-            fw.write("id, type, name, status, description, epic\n");
+        try (FileWriter fw = new FileWriter(storageFile)) {
+            fw.write("id, type, name, status, description, start time, duration epic\n");
             List<String> tasksToSave = transferToSave();
             for (String task : tasksToSave) {
                 fw.write(task);
@@ -109,15 +113,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         tasksToSave.addAll(epicToSave);
         tasksToSave.addAll(subtaskToSave);
         List<String> joinedList = new ArrayList<>();
-
+       //    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy HH:mm");
 
         for (Task task : tasksToSave) {
+            String time = " ";
+            long duration = 0;
+            if (task.getStartTime() != null) time = task.getStartTime().toString();
+            if (task.getDuration() != null) duration = task.getDuration().toMinutes();
             String type = task.getClass().toString().toUpperCase().substring(6);
             StringBuilder str = new StringBuilder().append(task.getId()).append(", ").append(type).append(", ")
                     .append(task.getTitle())
                     .append(", ").append(task.getStatus()).append(", ")
-                    .append(task.getDescription());
-
+                    .append(task.getDescription()).append(", ").append(time).append(", ")
+                    .append(duration);
             if (task instanceof Subtask) {
                 Subtask sub = (Subtask) task;
                 str.append(", ").append(sub.getEpicId());
@@ -130,22 +138,33 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         private void fromStringToTasksArray(String taskInString) {
             String[] splitString = taskInString.split(", ");
             Type type = Type.valueOf(splitString[1]);
+            LocalDateTime startTime = null;
+            if (!splitString[5].isBlank()) startTime = LocalDateTime.parse(splitString[5]);
+            Duration duration = null;
+            if (Long.parseLong(splitString[6]) != 0) duration = Duration.ofMinutes(Long.parseLong(splitString[6]));
             switch (type) {
                 case TASK:
                     Task task = restoreTaskFromString(Integer.parseInt(splitString[0]), splitString[2], splitString[4],
-                            Status.valueOf(splitString[3]));
+                            Status.valueOf(splitString[3]),
+                            startTime,
+                            duration);
                     taskList.put(Integer.parseInt(splitString[0]), task);
                     break;
                 case EPIC:
-                    Epic epic = restoreEpicFromString(Integer.parseInt(splitString[0]), splitString[2], splitString[4], Status.valueOf(splitString[3]));
-                   epicList.put(Integer.parseInt(splitString[0]), epic);
+                    Epic epic = restoreEpicFromString(Integer.parseInt(splitString[0]), splitString[2], splitString[4],
+                            Status.valueOf(splitString[3]),
+                            startTime,
+                            duration);
+                    epicList.put(Integer.parseInt(splitString[0]), epic);
                     break;
                 case SUBTASK:
                     Subtask subtask = restoreSubtaskFromString(Integer.parseInt(splitString[0]), splitString[2],
-                            splitString[4], Status.valueOf(splitString[3]), Integer.parseInt(splitString[5]));
+                            splitString[4], Status.valueOf(splitString[3]),
+                            startTime,
+                            duration,
+                            Integer.parseInt(splitString[7]));
                     subtaskList.put(Integer.parseInt(splitString[0]), subtask);
-                    getEpicById(Integer.parseInt(splitString[5])).addSubtaskId(Integer.parseInt(splitString[0]));
-
+                    getEpicById(Integer.parseInt(splitString[7])).addSubtaskId(Integer.parseInt(splitString[0]));
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid class");
@@ -154,7 +173,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         public static FileBackedTaskManager loadFromFile(File file) {
             FileBackedTaskManager manager = new FileBackedTaskManager(file.toString());
-            manager.readFromFile(file);
+            if (file.length() > 0) manager.readFromFile(file);
             return manager;
         }
 
@@ -191,15 +210,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     }
 
-    private Task restoreTaskFromString(int id, String title, String description, Status status) {
-        return new Task(id, title, description, status);
+    private Task restoreTaskFromString(int id, String title,
+                                       String description,
+                                       Status status,
+                                       LocalDateTime startTime,
+                                       Duration duration) {
+        return new Task(id, title, description, status, startTime, duration);
     }
 
-    private Epic restoreEpicFromString(int id, String title, String description, Status status) {
-        return new Epic(id, title, description, status);
+    private Epic restoreEpicFromString(int id, String title,
+                                       String description,
+                                       Status status,
+                                       LocalDateTime startTime,
+                                       Duration duration) {
+        return new Epic(id, title, description, status, startTime, duration);
     }
 
-    private Subtask restoreSubtaskFromString(int id, String title, String description, Status status,int epicId) {
-        return new Subtask(id, title, description, status, epicId);
+    private Subtask restoreSubtaskFromString(int id, String title,
+                                             String description,
+                                             Status status,
+                                             LocalDateTime startTime,
+                                             Duration duration,
+                                             int epicId) {
+        return new Subtask(id, title, description, status, startTime, duration, epicId);
     }
 }

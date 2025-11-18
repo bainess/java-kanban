@@ -1,4 +1,5 @@
 import java.io.File;
+import java.nio.file.Path;
 
 public class Managers {
     public Manager getDefault() {
@@ -10,7 +11,7 @@ public class Managers {
     }
 
     public FileBackedTaskManager getFileBackedManager() {
-        File path = new File("storageFile.csv");
+        File path = new File(Path.of("storageFile.csv").toUri());
         return FileBackedTaskManager.loadFromFile(path);
     }
 }
