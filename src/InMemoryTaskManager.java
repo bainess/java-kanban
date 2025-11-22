@@ -8,7 +8,7 @@ public class InMemoryTaskManager implements Manager {
     protected final Map<Integer, Subtask> subtaskList = new HashMap<>();
     private final HistoryManager historyManager = new InMemoryHistoryManager();
     protected int count = 1;
-    protected Set<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    protected TreeSet<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     @Override
     public void createTask(Task task) {
@@ -205,7 +205,8 @@ public class InMemoryTaskManager implements Manager {
     }
 
     public TreeSet<Task> getPrioritizedTasks() {
-        return new TreeSet<Task>(tasksPrioritized);
+         return new TreeSet<Task>(tasksPrioritized);
+
     }
 
     protected boolean canScheduleAtTime(Task newTask) {
