@@ -7,7 +7,7 @@ public class InMemoryTaskManager implements Manager {
     protected final Map<Integer, Epic> epicList = new HashMap<>();
     protected final Map<Integer, Subtask> subtaskList = new HashMap<>();
     private final HistoryManager historyManager = new InMemoryHistoryManager();
-    protected int count = 0;
+    protected int count = 1;
     protected Set<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     @Override
@@ -23,11 +23,9 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void createEpic(Epic epic) {
         int id = count++;
-        epic.setId(id);
-        epicList.put(id, epic);
-        epic.setEpicStatus(subtaskList);
-        epic.setStartTime(subtaskList);
-        epic.setDuration(subtaskList);
+        Epic newEpic = new Epic(epic.title, epic.description);
+        newEpic.setId(id);
+        epicList.put(id, newEpic);
     }
 
     @Override
@@ -50,7 +48,8 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeTaskById(int id) {
         if (taskList.containsKey(id)) {
-            tasksPrioritized.remove(taskList.get(id));
+            Task task = taskList.get(id);
+            if (task.getStartTime() != null) tasksPrioritized.remove(task);
             taskList.remove(id);
             historyManager.remove(id);
 
@@ -60,18 +59,19 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeEpicById(int id) {
         if (epicList.containsKey(id)) {
-            tasksPrioritized.remove(epicList.get(id));
             List<Integer> epicIds = epicList.get(id).getSubtaskIds();
             subtaskList.entrySet().stream()
                     .filter(entry -> epicIds.contains(entry.getKey()))
                     .map(entry -> subtaskList.remove(id)).findFirst();
+            historyManager.remove(id);
         }
     }
 
     @Override
     public void removeSubtaskById(int id) {
         if (subtaskList.containsKey(id)) {
-            tasksPrioritized.remove(subtaskList.get(id));
+            Subtask subtask = subtaskList.get(id);
+            if (subtask.getStartTime() != null) tasksPrioritized.remove(subtask);
             historyManager.remove(id);
             Subtask subToRemove = subtaskList.get(id);
             int epicId = subToRemove.getEpicId();
@@ -83,8 +83,7 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public Task getTaskById(int id) {
-        boolean containsKey = taskList.containsKey(id);
-        if (containsKey) {
+        if (taskList.containsKey(id)) {
             historyManager.addToHistoryList(taskList.get(id));
             return taskList.get(id);
         } else {
@@ -199,7 +198,10 @@ public class InMemoryTaskManager implements Manager {
     }
 
     private void addToPrioritizedTasks(Task task) {
-        tasksPrioritized.add(task);
+        if (task.getStartTime() != null) {
+            tasksPrioritized.add(task);
+        }
+
     }
 
     public TreeSet<Task> getPrioritizedTasks() {

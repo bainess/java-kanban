@@ -1,7 +1,7 @@
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class Task implements Comparable<Task> {
+public class Task  {
 
     protected String title;
     protected String description;
@@ -50,6 +50,15 @@ public class Task implements Comparable<Task> {
         this.id = id;
         this.startTime = startTime;
         this.duration = duration;
+    }
+
+    // danger
+    public Task(String title, String description, Status status,  String startTime, String duration) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+//        this.startTime = startTime;
+//        this.duration = duration;
     }
 
 
@@ -104,13 +113,25 @@ public class Task implements Comparable<Task> {
         return 31 * id;
     }
 
-    @Override
-    public String toString() {
-        return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + "\n";
-   }
+   // @Override
+//    public String toString() {
+//        return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + "\n";
+//   }
 
-    @Override
-    public int compareTo(Task task) {
-        return this.startTime.compareTo(task.startTime);
-    }
+//    @Override
+//    public int compareTo(Task task) {
+//        return this.startTime.compareTo(task.startTime);
+//    }
 }
+
+/*
+{
+    "title":"swim",
+    "description":"swim in the river",
+    "status":"IN_PROGRESS",
+    "startTime":"25-11-20 16.40",
+    "duration":"PT30M"
+}
+
+{"title":"swim","description":"swim in the river","status":"IN_PROGRESS","startTime":"25-11-20 16.40","duration":"PT30M"}
+ */

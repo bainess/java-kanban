@@ -26,7 +26,7 @@ public class Epic extends Task {
                 .entrySet()
                 .stream()
                 .filter(entry -> subtaskIds.contains(entry.getKey()))
-                .filter(subtask -> subtask.getValue() != null)
+                .filter(entry -> entry.getValue().getStartTime() != null)
                 .map(entry -> entry.getValue().getStartTime())
                 .min(LocalDateTime::compareTo);
         return time.orElse(null);
@@ -42,12 +42,13 @@ public class Epic extends Task {
         LocalDateTime startTime = getStartTime(subtaskMap);
         if (startTime == null) return null;
         Duration epicDuration = subtaskIds.stream().map(id -> subtaskMap.get(id).getDuration())
+                .filter(Objects::nonNull)
                     .reduce(Duration.ofDays(0), Duration::plus);
         return startTime.plus(epicDuration);
     }
 
     public void addSubtaskId(int id) {
-        subtaskIds.add(id);
+        this.subtaskIds.add(id);
     }
 
     public List<Integer> getSubtaskIds() {
@@ -55,7 +56,7 @@ public class Epic extends Task {
     }
 
     public void removeSubTaskId(int id) {
-        subtaskIds.stream().map(subtask -> subtaskIds.remove(id)).toList();
+        subtaskIds.remove(subtaskIds.indexOf(id));
     }
 
     public void setEpicStatus(Map<Integer, Subtask> subtaskMap) {
@@ -70,8 +71,8 @@ public class Epic extends Task {
 
     }
 
-    @Override
-    public String toString() {
-        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + " subtasks: " + this.subtaskIds;
-    }
+//    @Override
+//    public String toString() {
+//        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + " subtasks: " + this.subtaskIds;
+//    }
 }
