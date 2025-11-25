@@ -11,12 +11,14 @@ public class InMemoryTaskManager implements Manager {
     protected TreeSet<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws TaskCreationException {
         if (canScheduleAtTime(task)) {
             int id = count++;
             task.setId(id);
             taskList.put(id, task);
             addToPrioritizedTasks(task);
+        } else {
+            throw new TaskCreationException("Time slot has been occupied");
         }
     }
 
@@ -29,7 +31,8 @@ public class InMemoryTaskManager implements Manager {
     }
 
     @Override
-    public void createSubtask(Subtask subtask) {
+    public void createSubtask(Subtask subtask) throws TaskCreationException, SubtaskCreationException {
+        if (!epicList.containsKey(subtask.getEpicId())) throw new SubtaskCreationException("The epic by given id doesn't exist");
         if (canScheduleAtTime(subtask)) {
             int id = count++;
             subtask.setId(id);
@@ -41,6 +44,8 @@ public class InMemoryTaskManager implements Manager {
             epic.setStartTime(subtaskList);
             epic.setDuration(subtaskList);
             addToPrioritizedTasks(subtask);
+        } else {
+            throw new TaskCreationException("Time slot has been occupied");
         }
 
     }
@@ -59,11 +64,12 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeEpicById(int id) {
         if (epicList.containsKey(id)) {
-            List<Integer> epicIds = epicList.get(id).getSubtaskIds();
-            subtaskList.entrySet().stream()
-                    .filter(entry -> epicIds.contains(entry.getKey()))
-                    .map(entry -> subtaskList.remove(id)).findFirst();
+            List<Integer> epicSubtasksIds = epicList.get(id).getSubtaskIds();
+            for (int subtaskId : epicSubtasksIds) {
+                subtaskList.remove(subtaskId);
+            }
             historyManager.remove(id);
+            epicList.remove(id);
         }
     }
 
@@ -119,7 +125,7 @@ public class InMemoryTaskManager implements Manager {
         taskList.clear();
         epicList.clear();
         subtaskList.clear();
-        count = 0;
+        count = 1;
     }
 
     @Override

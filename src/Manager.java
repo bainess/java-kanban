@@ -2,11 +2,11 @@ import java.util.List;
 import java.util.Set;
 
 public interface Manager {
-    void createTask(Task task);
+    void createTask(Task task) throws TaskCreationException;
 
     void createEpic(Epic epic);
 
-    void createSubtask(Subtask subtask);
+    void createSubtask(Subtask subtask) throws TaskCreationException, SubtaskCreationException;
 
     void removeTaskById(int id);
 

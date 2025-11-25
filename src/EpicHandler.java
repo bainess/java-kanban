@@ -7,18 +7,24 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class EpicHandler extends BaseHttpHandler implements HttpHandler {
-    String method;
-    String path;
+    public EpicHandler(Manager manager) {
+        super(manager);
+    }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        try{
+        try {
             method = exchange.getRequestMethod();
             path = exchange.getRequestURI().getPath();
 
             switch (method) {
                 case "GET":
-                    writeResponse(exchange, handleGetRequest(exchange), 200);
+                    String response = handleGetRequest(exchange);
+                    if (response.equals("null")) {
+                        writeResponse(exchange, "No epic was found", 404);
+                    } else {
+                        writeResponse(exchange, handleGetRequest(exchange), 200);
+                    }
                     break;
                 case "POST":
                     handlePostRequest(exchange);
@@ -26,6 +32,7 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
                     break;
                 case "DELETE":
                     handleDeleteRequest(exchange);
+                    writeResponse(exchange, "Epic successfully deleted", 201);
                     break;
                 default:
                     writeResponse(exchange, "Unknown method for epic", 500);
@@ -35,34 +42,37 @@ public class EpicHandler extends BaseHttpHandler implements HttpHandler {
         }
     }
 
-    private void handleDeleteRequest(HttpExchange exchange)  throws IOException{
+    private void handleDeleteRequest(HttpExchange exchange)  throws IOException {
         String[] splitPath = path.split("/");
         if (splitPath.length == 2) {
-            MANAGER.removeAllEpics();
+            manager.removeAllEpics();
         } else if (splitPath.length == 3) {
-            MANAGER.removeEpicById(Integer.parseInt(splitPath[2]));
+            manager.removeEpicById(Integer.parseInt(splitPath[2]));
         }
     }
 
     private void handlePostRequest(HttpExchange exchange) throws IOException {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-        Epic epic = GSON.fromJson(body, Epic.class);
+        Epic epic = gson.fromJson(body, Epic.class);
         if (epic.getId() == 0) {
-            MANAGER.createEpic(epic);
+            manager.createEpic(epic);
         } else {
-            MANAGER.editEpic(epic);
+            manager.editEpic(epic);
         }
     }
 
-    static class EpicTypeToken extends TypeToken<List<Epic>>{}
+    static class EpicTypeToken extends TypeToken<List<Epic>> {
+    }
 
     private String handleGetRequest(HttpExchange exchange) {
         String[] splitPath = path.split("/");
         String respond = "";
         if (splitPath.length == 2) {
-            respond = GSON.toJson(MANAGER.getAllEpic(), new EpicTypeToken().getType());
+            respond = gson.toJson(manager.getAllEpic(), new EpicTypeToken().getType());
         } else if (splitPath.length == 3) {
-            respond = GSON.toJson(MANAGER.getEpicById(Integer.parseInt(splitPath[2])));
+            respond = gson.toJson(manager.getEpicById(Integer.parseInt(splitPath[2])));
+        } else if (splitPath.length == 4) {
+            respond = gson.toJson(manager.getAllSubtasksByEpic(Integer.parseInt(splitPath[2])));
         }
         return respond;
     }

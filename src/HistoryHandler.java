@@ -7,19 +7,22 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     String method;
     String path;
 
+    public HistoryHandler(Manager manager) {
+        super(manager);
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
             method = exchange.getRequestMethod();
             path = exchange.getRequestURI().getPath();
 
-            switch(method) {
+            switch (method) {
                 case "GET":
                     writeResponse(exchange, handleGetRequest(exchange), 200);
                     break;
                 default:
                     writeResponse(exchange, "Internal Service Error", 500);
-
             }
         } catch (IOException e) {
             writeResponse(exchange, "Internal Service Error", 500);
@@ -27,6 +30,6 @@ public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     }
 
     private String handleGetRequest(HttpExchange exchange) {
-        return GSON.toJson(MANAGER.showHistory());
+        return gson.toJson(manager.showHistory());
     }
 }

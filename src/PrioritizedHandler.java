@@ -2,14 +2,16 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
-import java.util.Set;
 
 public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
+    public PrioritizedHandler(Manager manager) {
+        super(manager);
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
-
-        switch(method) {
+        switch (method) {
             case "GET":
                 writeResponse(exchange, handleGetRequest(exchange), 200);
                 break;
@@ -17,7 +19,8 @@ public class PrioritizedHandler extends BaseHttpHandler implements HttpHandler {
                 writeResponse(exchange, "Internal Service Error", 501);
         }
     }
+
     private String handleGetRequest(HttpExchange exchange) {
-        return GSON.toJson(MANAGER.getPrioritizedTasks());
+        return gson.toJson(manager.getPrioritizedTasks());
     }
 }

@@ -71,8 +71,8 @@ public class Epic extends Task {
 
     }
 
-//    @Override
-//    public String toString() {
-//        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + " subtasks: " + this.subtaskIds;
-//    }
+    @Override
+    public String toString() {
+        return "Epic " + this.getId() + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + " subtasks: " + this.subtaskIds;
+    }
 }

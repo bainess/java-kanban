@@ -12,7 +12,7 @@ class InMemoryHistoryManagerTest {
     static InMemoryTaskManager taskManager;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws TaskCreationException, SubtaskCreationException {
         taskManager = new InMemoryTaskManager();
         taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(5)));
         taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 15, 45), Duration.ofMinutes(10)));
@@ -49,7 +49,7 @@ class InMemoryHistoryManagerTest {
     }
 
     @Test
-    void shouldRemoveTaskTaskFromBeginningOfList() {
+    void shouldRemoveTaskTaskFromBeginningOfList() throws TaskCreationException {
         taskManager.removeAllTasks();
         Task task1 = new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(5));
         Task task2 = new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 15, 45), Duration.ofMinutes(10));
