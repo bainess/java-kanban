@@ -17,7 +17,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws TaskCreationException {
         super.createTask(task);
         save();
     }
@@ -29,7 +29,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void createSubtask(Subtask subtask) {
+    public void createSubtask(Subtask subtask) throws TaskCreationException, SubtaskCreationException {
         super.createSubtask(subtask);
         save();
     }

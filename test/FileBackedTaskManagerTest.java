@@ -15,7 +15,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldAddTasksToFile() {
+    void shouldAddTasksToFile() throws TaskCreationException, SubtaskCreationException {
         fileBackedManager.createTask(new Task("read", "read a book", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30)));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > 0);
         int length = (int) fileBackedManager.getStorageFile().length();
@@ -28,7 +28,7 @@ public class FileBackedTaskManagerTest {
     }
 
     @Test
-    void shouldReturnTasksFromString() {
+    void shouldReturnTasksFromString() throws TaskCreationException, SubtaskCreationException {
         Task task1  = new Task("kick" ,"kick a ball", Status.NEW,
                 LocalDateTime.of(2022, 11, 4, 14, 47), Duration.ofMinutes(15));
         fileBackedManager.createTask(task1);

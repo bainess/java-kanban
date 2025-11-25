@@ -14,14 +14,14 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
     @Test
-    void shouldReturnTaskNoStartTime() {
+    void shouldReturnTaskNoStartTime() throws TaskCreationException {
         Task task = new Task("kick", "kick a ball", Status.NEW);
         taskManager.createTask(task);
         Assertions.assertEquals(1, taskManager.getAllTasks().size());
     }
 
     @Test
-    void shouldReturnTask() {
+    void shouldReturnTask() throws TaskCreationException {
         Task task = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 00), Duration.ofMinutes(10));
         taskManager.createTask(task);
         Assertions.assertEquals(1, taskManager.getAllTasks().size());
@@ -49,7 +49,7 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
     @Test
-    void shouldEditTask() {
+    void shouldEditTask() throws TaskCreationException {
         Task task = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 00), Duration.ofMinutes(10));
         taskManager.createTask(task);
         int id = taskManager.getTaskById(task.getId()).getId();
@@ -75,7 +75,7 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
     @Test
-    void shouldEditSubtask() {
+    void shouldEditSubtask() throws SubtaskCreationException, TaskCreationException {
         Epic epic = new Epic("read", "read a book");
         Subtask subtask = new Subtask("read ch1", "Read about dragons" , Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 00), Duration.ofMinutes(10), epic.getId());
         taskManager.createEpic(epic);
@@ -90,7 +90,7 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
         @Test
-    void shouldRemoveTasks() {
+    void shouldRemoveTasks() throws TaskCreationException {
         Task task = new Task("kick", "kick a ball", Status.NEW);
         taskManager.createTask(task);
         Task task2 = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 00), Duration.ofMinutes(10));
@@ -111,7 +111,7 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
     @Test
-    void shouldRemoveSubtasks() {
+    void shouldRemoveSubtasks() throws SubtaskCreationException, TaskCreationException {
         Epic epic = new Epic("read", "read a book");
         Subtask subtask = new Subtask("read ch1", "Read about dragons" , Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 00), Duration.ofMinutes(10), epic.getId());
         taskManager.createEpic(epic);
@@ -125,7 +125,7 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
     @Test
-    void shouldNotAddTaskIfTimeOverlapsAtTheStart() {
+    void shouldNotAddTaskIfTimeOverlapsAtTheStart() throws TaskCreationException {
         Task task = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 00), Duration.ofMinutes(10));
         taskManager.createTask(task);
         Task task2 = new Task("throw", "throw a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 10, 55), Duration.ofMinutes(10));
@@ -134,7 +134,7 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
     @Test
-    void shouldNotAddTaskIfTimeOverlapsAtTheEnd() {
+    void shouldNotAddTaskIfTimeOverlapsAtTheEnd() throws TaskCreationException {
         Task task = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 0), Duration.ofMinutes(10));
         taskManager.createTask(task);
         Task task2 = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 5), Duration.ofMinutes(10));
@@ -143,7 +143,7 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
     @Test
-    void shouldNotAddTaskIfTimeOverlapsAtInTheMIddle() {
+    void shouldNotAddTaskIfTimeOverlapsAtInTheMIddle() throws TaskCreationException {
         Task task = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 00), Duration.ofMinutes(30));
         taskManager.createTask(task);
         Task task2 = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 10), Duration.ofMinutes(10));
@@ -152,7 +152,7 @@ abstract class TaskManagerTest<T extends Manager> {
     }
 
     @Test
-    void shouldNotAddTaskIfTimeOverlaps() {
+    void shouldNotAddTaskIfTimeOverlaps() throws TaskCreationException {
         Task task = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 11, 0), Duration.ofMinutes(10));
         taskManager.createTask(task);
         Task task2 = new Task("kick", "kick a ball", Status.NEW, LocalDateTime.of(2025, 11, 12, 10, 50), Duration.ofMinutes(50));

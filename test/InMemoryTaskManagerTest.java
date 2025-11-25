@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryTaskManagerTest {
     static InMemoryTaskManager taskManager;
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws TaskCreationException, SubtaskCreationException {
         taskManager = new InMemoryTaskManager();
         taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
         taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));
@@ -45,7 +45,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shouldReturnStatusNew() {
+    void shouldReturnStatusNew() throws TaskCreationException, SubtaskCreationException {
         taskManager.removeAll();
         Epic epic = new Epic("do", "do hwk");
         taskManager.createEpic(epic);
@@ -59,7 +59,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shoulsReturnStatusInProgress() {
+    void shoulsReturnStatusInProgress() throws TaskCreationException, SubtaskCreationException {
         taskManager.removeAll();
         Epic epic = new Epic("do", "do hwk");
         taskManager.createEpic(epic);
@@ -73,7 +73,7 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
-    void shoulsReturnStatusDone() {
+    void shoulsReturnStatusDone() throws TaskCreationException, SubtaskCreationException {
         taskManager.removeAll();
         Epic epic = new Epic("do", "do hwk");
         taskManager.createEpic(epic);
@@ -87,7 +87,7 @@ class InMemoryTaskManagerTest {
     }
 
         @Test
-        void shoulsReturnStatusINProgressWhenNEWandDone() {
+        void shoulsReturnStatusINProgressWhenNEWandDone() throws TaskCreationException, SubtaskCreationException {
             taskManager.removeAll();
             Epic epic = new Epic("do", "do hwk");
             taskManager.createEpic(epic);
@@ -101,7 +101,7 @@ class InMemoryTaskManagerTest {
     }
 
         @Test
-    void shouldReturnTasksPrioritised() {
+    void shouldReturnTasksPrioritised() throws TaskCreationException {
         taskManager.removeAll();
         taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 20, 45), Duration.ofMinutes(30)));
         taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(30)));

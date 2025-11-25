@@ -1,22 +1,19 @@
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.Duration;
 import java.util.List;
-
-import com.google.gson.Gson;
 
 public class TaskHandler extends BaseHttpHandler implements HttpHandler {
     String method;
     String path;
+
+    public TaskHandler(Manager manager) {
+        super(manager);
+    }
+
     @Override
     public void handle(HttpExchange exchange) throws IOException {
         try {
@@ -24,11 +21,16 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
             path = exchange.getRequestURI().getPath();
             switch (method) {
                 case "GET":
-                    writeResponse(exchange, handleGetRequest(exchange), 200);
+                    String response = handleGetRequest(exchange);
+                    if (response.equals("null")) {
+                        writeResponse(exchange, "No epic was found", 404);
+                    } else {
+                        writeResponse(exchange, response, 200);
+                    }
                     break;
                 case "POST":
                     handlePostRequest(exchange);
-                    writeResponse(exchange, "Task successfully added" , 201);
+                    writeResponse(exchange, "Task successfully added", 201);
                     break;
             case "DELETE":
                 handleDeleteRequest(exchange);
@@ -37,41 +39,44 @@ public class TaskHandler extends BaseHttpHandler implements HttpHandler {
                 default:
                     writeResponse(exchange, "Unknown method", 404);
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
            System.out.println("Error");
+           throw new IOException(e);
+        } catch (TaskCreationException e) {
+            writeResponse(exchange, "Task cannot be added at the time", 406);
         }
     }
 
     private void handleDeleteRequest(HttpExchange exchange) throws IOException {
-        String[] splithPath = path.split("/");
-        if (splithPath.length == 2) {
-            MANAGER.removeAllTasks();
-        } else if (splithPath.length == 3) {
-            MANAGER.removeTaskById(Integer.parseInt(splithPath[2]));
+        String[] splitPath = path.split("/");
+        if (splitPath.length == 2) {
+            manager.removeAllTasks();
+        } else if (splitPath.length == 3) {
+            manager.removeTaskById(Integer.parseInt(splitPath[2]));
         }
     }
 
-    private void handlePostRequest(HttpExchange exchange) throws IOException {
+    private void handlePostRequest(HttpExchange exchange) throws IOException, TaskCreationException {
         String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-        Task task = GSON.fromJson(body, Task.class);
-        if (task.getId() == 0)
-        {
-            MANAGER.createTask(task);
+        Task task = gson.fromJson(body, Task.class);
+        if (task.getId() == 0) {
+            manager.createTask(task);
         } else {
-            MANAGER.editTask(task);
+            manager.editTask(task);
         }
     }
 
-    static class TaskTypeToken extends TypeToken<List<Task>>{}
+    static class TaskTypeToken extends TypeToken<List<Task>> {
+    }
 
     private String handleGetRequest(HttpExchange exchange) {
-        String[] splithPath = path.split("/");
+        String[] splitPath = path.split("/");
         String respond = "";
 
-        if (splithPath.length == 2) {
-           respond = GSON.toJson(MANAGER.getAllTasks(), new TaskTypeToken().getType());
-        } else if (splithPath.length == 3) {
-           respond = GSON.toJson(MANAGER.getTaskById(Integer.parseInt(splithPath[2])));
+        if (splitPath.length == 2) {
+           respond = gson.toJson(manager.getAllTasks(), new TaskTypeToken().getType());
+        } else if (splitPath.length == 3) {
+           respond = gson.toJson(manager.getTaskById(Integer.parseInt(splitPath[2])));
         }
         return respond;
     }
