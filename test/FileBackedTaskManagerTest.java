@@ -23,7 +23,7 @@ public class FileBackedTaskManagerTest {
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
         length = (int) fileBackedManager.getStorageFile().length();
         fileBackedManager.createSubtask(new Subtask("buy", "buy tools", Status.IN_PROGRESS,
-                LocalDateTime.of(2022, 11, 04, 14, 46), Duration.ofMinutes(45), 1));
+                LocalDateTime.of(2022, 11, 04, 14, 46), Duration.ofMinutes(45), 2));
         Assertions.assertTrue( fileBackedManager.getStorageFile().length() > length);
     }
 

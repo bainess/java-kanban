@@ -25,9 +25,9 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void createEpic(Epic epic) {
         int id = count++;
-        Epic newEpic = new Epic(epic.title, epic.description);
-        newEpic.setId(id);
-        epicList.put(id, newEpic);
+        //Epic newEpic = new Epic(epic.title, epic.description);
+        epic.setId(id);
+        epicList.put(id, epic);
     }
 
     @Override

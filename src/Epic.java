@@ -3,12 +3,13 @@ import java.time.Duration;
 import java.util.*;
 
 public class Epic extends Task {
-   private final List<Integer> subtaskIds = new ArrayList<>();
+   private List<Integer> subtaskIds;
     protected LocalDateTime endTime;
 
 
     public Epic(String title, String description) {
         super(title, description);
+        this.subtaskIds = new ArrayList<>();
     }
 
     public void setStartTime(Map<Integer, Subtask> subtaskMap) {
@@ -36,6 +37,7 @@ public class Epic extends Task {
         super(title, description, startTime, duration);
         this.id = id;
         this.status = status;
+        this.subtaskIds = new ArrayList<>();
     }
 
     private LocalDateTime getEndTime(Map<Integer, Subtask> subtaskMap) {
@@ -48,6 +50,7 @@ public class Epic extends Task {
     }
 
     public void addSubtaskId(int id) {
+        if (this.subtaskIds == null) this.subtaskIds = new ArrayList<>();
         this.subtaskIds.add(id);
     }
 
