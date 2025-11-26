@@ -153,7 +153,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
         private void fromStringToTasksArray(String taskInString) {
             String[] splitString = taskInString.split(", ");
-            Type type = Type.fromString(splitString[1]);
+            Type type = Type.valueOf(splitString[1]);
             LocalDateTime startTime = null;
             if (!splitString[5].isBlank()) startTime = LocalDateTime.parse(splitString[5]);
             Duration duration = null;
