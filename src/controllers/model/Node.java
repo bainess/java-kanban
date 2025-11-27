@@ -1,3 +1,5 @@
+package controllers.model;
+
 public class Node<T extends Task> {
     private final Task task;
     private Node<T> next;
@@ -21,11 +23,11 @@ public class Node<T extends Task> {
         return task;
     }
 
-    void setNextNode(Node<T> node) {
+    public void setNextNode(Node<T> node) {
         next = node;
     }
 
-    void setPrevNode(Node<T> node) {
+    public void setPrevNode(Node<T> node) {
         prev = node;
     }
 }

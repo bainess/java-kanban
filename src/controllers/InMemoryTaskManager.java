@@ -1,3 +1,11 @@
+package controllers;
+
+import controllers.model.Epic;
+import controllers.model.Subtask;
+import controllers.model.Task;
+import exceptions.SubtaskCreationException;
+import exceptions.TaskCreationException;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -7,31 +15,32 @@ public class InMemoryTaskManager implements Manager {
     protected final Map<Integer, Epic> epicList = new HashMap<>();
     protected final Map<Integer, Subtask> subtaskList = new HashMap<>();
     private final HistoryManager historyManager = new InMemoryHistoryManager();
-    protected int count = 0;
-    protected Set<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
+    protected int count = 1;
+    protected TreeSet<Task> tasksPrioritized = new TreeSet<>(Comparator.comparing(Task::getStartTime));
 
     @Override
-    public void createTask(Task task) {
+    public void createTask(Task task) throws TaskCreationException {
         if (canScheduleAtTime(task)) {
             int id = count++;
             task.setId(id);
             taskList.put(id, task);
             addToPrioritizedTasks(task);
+        } else {
+            throw new TaskCreationException("Time slot has been occupied");
         }
     }
 
     @Override
     public void createEpic(Epic epic) {
         int id = count++;
+        //model.Epic newEpic = new model.Epic(epic.title, epic.description);
         epic.setId(id);
         epicList.put(id, epic);
-        epic.setEpicStatus(subtaskList);
-        epic.setStartTime(subtaskList);
-        epic.setDuration(subtaskList);
     }
 
     @Override
-    public void createSubtask(Subtask subtask) {
+    public void createSubtask(Subtask subtask) throws TaskCreationException, SubtaskCreationException {
+        if (!epicList.containsKey(subtask.getEpicId())) throw new SubtaskCreationException("The epic by given id doesn't exist");
         if (canScheduleAtTime(subtask)) {
             int id = count++;
             subtask.setId(id);
@@ -43,6 +52,8 @@ public class InMemoryTaskManager implements Manager {
             epic.setStartTime(subtaskList);
             epic.setDuration(subtaskList);
             addToPrioritizedTasks(subtask);
+        } else {
+            throw new TaskCreationException("Time slot has been occupied");
         }
 
     }
@@ -50,7 +61,8 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeTaskById(int id) {
         if (taskList.containsKey(id)) {
-            tasksPrioritized.remove(taskList.get(id));
+            Task task = taskList.get(id);
+            if (task.getStartTime() != null) tasksPrioritized.remove(task);
             taskList.remove(id);
             historyManager.remove(id);
 
@@ -60,18 +72,20 @@ public class InMemoryTaskManager implements Manager {
     @Override
     public void removeEpicById(int id) {
         if (epicList.containsKey(id)) {
-            tasksPrioritized.remove(epicList.get(id));
-            List<Integer> epicIds = epicList.get(id).getSubtaskIds();
-            subtaskList.entrySet().stream()
-                    .filter(entry -> epicIds.contains(entry.getKey()))
-                    .map(entry -> subtaskList.remove(id)).findFirst();
+            List<Integer> epicSubtasksIds = epicList.get(id).getSubtaskIds();
+            for (int subtaskId : epicSubtasksIds) {
+                subtaskList.remove(subtaskId);
+            }
+            historyManager.remove(id);
+            epicList.remove(id);
         }
     }
 
     @Override
     public void removeSubtaskById(int id) {
         if (subtaskList.containsKey(id)) {
-            tasksPrioritized.remove(subtaskList.get(id));
+            Subtask subtask = subtaskList.get(id);
+            if (subtask.getStartTime() != null) tasksPrioritized.remove(subtask);
             historyManager.remove(id);
             Subtask subToRemove = subtaskList.get(id);
             int epicId = subToRemove.getEpicId();
@@ -83,8 +97,7 @@ public class InMemoryTaskManager implements Manager {
 
     @Override
     public Task getTaskById(int id) {
-        boolean containsKey = taskList.containsKey(id);
-        if (containsKey) {
+        if (taskList.containsKey(id)) {
             historyManager.addToHistoryList(taskList.get(id));
             return taskList.get(id);
         } else {
@@ -120,7 +133,7 @@ public class InMemoryTaskManager implements Manager {
         taskList.clear();
         epicList.clear();
         subtaskList.clear();
-        count = 0;
+        count = 1;
     }
 
     @Override
@@ -199,11 +212,15 @@ public class InMemoryTaskManager implements Manager {
     }
 
     private void addToPrioritizedTasks(Task task) {
-        tasksPrioritized.add(task);
+        if (task.getStartTime() != null) {
+            tasksPrioritized.add(task);
+        }
+
     }
 
     public TreeSet<Task> getPrioritizedTasks() {
-        return new TreeSet<Task>(tasksPrioritized);
+         return new TreeSet<Task>(tasksPrioritized);
+
     }
 
     protected boolean canScheduleAtTime(Task newTask) {

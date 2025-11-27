@@ -1,7 +1,11 @@
+package controllers.model;
+
+import controllers.util.Status;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-public class Task implements Comparable<Task> {
+public class Task  {
 
     protected String title;
     protected String description;
@@ -15,7 +19,7 @@ public class Task implements Comparable<Task> {
         this.description = description;
     }
 
-    protected Task(String title, String description, Status status) {
+    public Task(String title, String description, Status status) {
         this.title = title;
         this.description = description;
         this.status = status;
@@ -28,7 +32,7 @@ public class Task implements Comparable<Task> {
         this.duration = duration;
     }
 
-    public Task(String title, String description, Status status,  LocalDateTime startTime, Duration duration) {
+    public Task(String title, String description, Status status, LocalDateTime startTime, Duration duration) {
         this.title = title;
         this.description = description;
         this.status = status;
@@ -43,13 +47,22 @@ public class Task implements Comparable<Task> {
         this.id = id;
     }
 
-    public Task(int id, String title, String description, Status status,  LocalDateTime startTime, Duration duration) {
+    public Task(int id, String title, String description, Status status, LocalDateTime startTime, Duration duration) {
         this.title = title;
         this.description = description;
         this.status = status;
         this.id = id;
         this.startTime = startTime;
         this.duration = duration;
+    }
+
+    // danger
+    public Task(String title, String description, Status status, String startTime, String duration) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+//        this.startTime = startTime;
+//        this.duration = duration;
     }
 
 
@@ -106,11 +119,6 @@ public class Task implements Comparable<Task> {
 
     @Override
     public String toString() {
-        return "Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + "\n";
+        return "model.Task " + this.id  + " " + this.title + " "  + this.description + " "  + this.status + " " + this.startTime + " " + this.duration + "\n";
    }
-
-    @Override
-    public int compareTo(Task task) {
-        return this.startTime.compareTo(task.startTime);
-    }
 }

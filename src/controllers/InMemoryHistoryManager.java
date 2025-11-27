@@ -1,3 +1,8 @@
+package controllers;
+
+import controllers.model.Node;
+import controllers.model.Task;
+
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {

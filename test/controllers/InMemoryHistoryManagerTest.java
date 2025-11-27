@@ -1,3 +1,11 @@
+package controllers;
+
+import exceptions.SubtaskCreationException;
+import exceptions.TaskCreationException;
+import controllers.model.Epic;
+import controllers.util.Status;
+import controllers.model.Subtask;
+import controllers.model.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,18 +20,20 @@ class InMemoryHistoryManagerTest {
     static InMemoryTaskManager taskManager;
 
     @BeforeEach
-    void beforeEach() {
+    void beforeEach() throws TaskCreationException, SubtaskCreationException {
         taskManager = new InMemoryTaskManager();
         taskManager.createTask(new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(5)));
         taskManager.createTask(new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 15, 45), Duration.ofMinutes(10)));
         taskManager.createTask(new Task("wallpaper", "in the hallway", Status.DONE, LocalDateTime.of(2022, 11, 4, 16, 45), Duration.ofMinutes(15)));
-        taskManager.createEpic(new Epic("sweep", "sweep the floor"));
-        taskManager.createEpic(new Epic("cook dinner", ""));
+        Epic epic1 = new Epic("sweep", "sweep the floor");
+        Epic epic2 = new Epic("cook dinner", "");
+        taskManager.createEpic(epic1);
+        taskManager.createEpic(epic2);
 
-        taskManager.createSubtask(new Subtask("broom", "buy the broom", Status.NEW, LocalDateTime.of(2022, 11, 4, 17, 45), Duration.ofMinutes(40), 3));
-        taskManager.createSubtask(new Subtask("get the dustpan", "", Status.NEW, LocalDateTime.of(2022, 11, 4, 18, 45), Duration.ofMinutes(45), 3));
-        taskManager.createSubtask(new Subtask("buy veggies", "tomatoes, mushrooms", Status.DONE, LocalDateTime.of(2022, 11, 4, 19, 45), Duration.ofMinutes(8), 4));
-        taskManager.createSubtask(new Subtask("cut ingredients", "dice, slice", Status.DONE, LocalDateTime.of(2022, 11, 4, 20, 45), Duration.ofMinutes(9), 4));
+        taskManager.createSubtask(new Subtask("broom", "buy the broom", Status.NEW, LocalDateTime.of(2022, 11, 4, 17, 45), Duration.ofMinutes(40), epic1.getId()));
+        taskManager.createSubtask(new Subtask("get the dustpan", "", Status.NEW, LocalDateTime.of(2022, 11, 4, 18, 45), Duration.ofMinutes(45), epic1.getId()));
+        taskManager.createSubtask(new Subtask("buy veggies", "tomatoes, mushrooms", Status.DONE, LocalDateTime.of(2022, 11, 4, 19, 45), Duration.ofMinutes(8), epic1.getId()));
+        taskManager.createSubtask(new Subtask("cut ingredients", "dice, slice", Status.DONE, LocalDateTime.of(2022, 11, 4, 20, 45), Duration.ofMinutes(9), epic1.getId()));
         taskManager.createTask(new Task("tests", "complete tests for tm", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 21, 45), Duration.ofMinutes(18)));
     }
 
@@ -34,22 +44,22 @@ class InMemoryHistoryManagerTest {
 
     @Test
    void shouldAddNewTask() {
-        int oldhistory =  taskManager.showHistory().size();
-        taskManager.getTaskById(0);
+        int oldHistory =  taskManager.showHistory().size();
+        taskManager.getTaskById(1);
         int newHistory = taskManager.showHistory().size();
-        assertNotEquals(oldhistory, newHistory);
+        assertNotEquals(oldHistory, newHistory);
 
     }
     @Test
     void shouldRemoveRepeatedTask() {
-        taskManager.getTaskById(0);
         taskManager.getTaskById(1);
-        taskManager.getTaskById(0);
+        taskManager.getTaskById(2);
+        taskManager.getTaskById(1);
         assertEquals(2, taskManager.showHistory().size());
     }
 
     @Test
-    void shouldRemoveTaskTaskFromBeginningOfList() {
+    void shouldRemoveTaskTaskFromBeginningOfList() throws TaskCreationException {
         taskManager.removeAllTasks();
         Task task1 = new Task("do the dishes", "after the party", Status.NEW, LocalDateTime.of(2022, 11, 4, 14, 45), Duration.ofMinutes(5));
         Task task2 = new Task("do hwk", "math, biology", Status.IN_PROGRESS, LocalDateTime.of(2022, 11, 4, 15, 45), Duration.ofMinutes(10));
@@ -63,19 +73,19 @@ class InMemoryHistoryManagerTest {
     }
     @Test
     void shouldRemoveTaskFromMiddleToEndWhenRepeated() {
-        taskManager.getTaskById(0);
         taskManager.getTaskById(1);
         taskManager.getTaskById(2);
-        taskManager.getTaskById(1);
-        assertNotEquals(1, taskManager.showHistory().get(1).getId());
-        assertEquals(1, taskManager.showHistory().getLast().getId());
+        taskManager.getTaskById(3);
+        taskManager.getTaskById(2);
+        assertNotEquals(2, taskManager.showHistory().get(1).getId());
+        assertEquals(2, taskManager.showHistory().getLast().getId());
     }
     @Test
     void shouldRemoveRemovedTaskFromHistory() {
-        taskManager.getTaskById(0);
         taskManager.getTaskById(1);
         taskManager.getTaskById(2);
-        taskManager.removeTaskById(0);
+        taskManager.getTaskById(3);
+        taskManager.removeTaskById(1);
         assertEquals(2, taskManager.showHistory().size());
     }
 }
